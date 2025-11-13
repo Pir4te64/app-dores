@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm start)",
+      "Bash(npm install:*)",
+      "Bash(git log:*)",
+      "Bash(git fetch:*)",
+      "Bash(./gradlew clean:*)",
+      "Bash(./gradlew:*)",
+      "Bash(npx react-native start --reset-cache)",
+      "WebFetch(domain:dores.cruznegradev.com)",
+      "Bash(adb logcat:*)",
+      "Bash(npx expo start)",
+      "Bash(node:*)",
+      "Bash(netstat:*)",
+      "Bash(cat:*)",
+      "Bash(tr:*)",
+      "Bash(fold:*)",
+      "Bash(cmdkey /list:*)",
+      "Bash(git credential-cache:*)",
+      "Bash(git config:*)",
+      "Bash(git push:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git reset:*)",
+      "Bash(.gitignore)",
+      "Bash(git rm:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

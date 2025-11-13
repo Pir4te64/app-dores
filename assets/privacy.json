@@ -1,0 +1,58 @@
+{
+  "title": "POLÍTICA DE PRIVACIDAD",
+  "sections": [
+    {
+      "title": "1. Información Recopilada",
+      "content": [
+        "Datos personales: nombre, correo electrónico, número de teléfono u otros datos de contacto suministrados por el Usuario.",
+        "Información de pedidos: registros de productos solicitados, métodos de pago, montos, fechas y toda información necesaria para la prestación del servicio.",
+        "Esta información será tratada conforme a la Ley N.º 25.326 (Protección de Datos Personales) y normativas complementarias."
+      ]
+    },
+    {
+      "title": "2. Uso de la Información",
+      "content": [
+        "La información recopilada se emplea para personalizar la experiencia del Usuario y mejorar los servicios de la Plataforma.",
+        "Dores no comparte datos personales con terceros sin consentimiento expreso del Usuario, excepto cuando sea requerido por ley o cuando sea necesario para cumplir con un servicio solicitado (por ejemplo, procesadores de pago)."
+      ]
+    },
+    {
+      "title": "3. Seguridad de los Datos",
+      "content": [
+        "Dores implementa medidas de seguridad adecuadas para proteger la información contra accesos no autorizados, alteraciones o divulgaciones indebidas.",
+        "No obstante, debido a la naturaleza de Internet, Dores no garantiza la seguridad absoluta de los datos."
+      ]
+    },
+    {
+      "title": "4. Derechos del Usuario",
+      "subsections": [
+        {
+          "title": "De acuerdo con la Ley N.º 25.326, el Usuario puede solicitar:",
+          "content": [
+            "Acceso a sus datos personales.",
+            "Corrección de datos erróneos o desactualizados.",
+            "Supresión de sus datos, siempre que no exista obligación legal de conservarlos."
+          ]
+        },
+        {
+          "title": "Para ejercer estos derechos, el Usuario puede comunicarse con Dores mediante:",
+          "content": [
+            "Correo electrónico: administracion@Dores.com.ar",
+            "Teléfono: +54 3765 174804"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "5. Cambios en la Política",
+      "content": [
+        "Dores se reserva el derecho de modificar esta Política de Privacidad en cualquier momento.",
+        "Cualquier cambio significativo será notificado al Usuario a través de la Plataforma o por correo electrónico."
+      ]
+    }
+  ],
+  "footer": {
+    "content": "Al utilizar la Plataforma, el Usuario confirma que ha leído, entendido y aceptado estos Términos y Condiciones de Uso y la presente Política de Privacidad, quedando sujeto a lo aquí establecido y a la normativa vigente en la República Argentina.",
+    "lastUpdate": "Última actualización: 30/01/2025"
+  }
+}

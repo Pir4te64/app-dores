@@ -1,0 +1,131 @@
+{
+  "title": "TÉRMINOS Y CONDICIONES DE USO",
+  "sections": [
+    {
+      "title": "1. Introducción",
+      "content": "Bienvenido a Dores (en adelante, la \"Plataforma\"). Al acceder y utilizar la Plataforma, usted (en adelante, el \"Usuario\") acepta cumplir con los siguientes Términos y Condiciones de Uso. Si no está de acuerdo con alguna parte de estos términos, le recomendamos que se abstenga de utilizar nuestros servicios."
+    },
+    {
+      "title": "2. Definiciones",
+      "content": [
+        "\"Plataforma\": aplicación web y/o móvil de Dores, a través de la cual se publican menús y se gestionan órdenes de compra.",
+        "\"Usuario\": toda persona que accede o utiliza la Plataforma.",
+        "\"Comercio\": establecimiento registrado en la Plataforma que ofrece productos o servicios de alimentación.",
+        "\"Delivery\": servicio o persona independiente encargada de la entrega de pedidos gestionados por el Comercio, ajeno a la Plataforma."
+      ]
+    },
+    {
+      "title": "3. Alcance y Uso de la Plataforma",
+      "content": [
+        "Los Usuarios pueden explorar los menús y realizar órdenes de compra de manera inmediata.",
+        "Cada Comercio administra de forma independiente sus productos, precios, existencias y gestiona la logística de entrega de los pedidos.",
+        "Dores no es responsable de la calidad de los productos o servicios ofrecidos por los Comercios ni de la efectividad o puntualidad de la entrega."
+      ]
+    },
+    {
+      "title": "4. Pedidos",
+      "content": "Todos los pedidos se realizan en el momento y, por el momento, no se aceptan pedidos anticipados. Si el Usuario desea cancelar un pedido, deberá enviar una solicitud de cancelación a través de la plataforma, indicando el motivo correspondiente. Al recibir esta solicitud, se enviará una notificación al Comercio, quien se pondrá en contacto con el Usuario para aclarar o resolver cualquier inconveniente derivado del pedido."
+    },
+    {
+      "title": "5. Cancelaciones",
+      "content": [
+        "El Comercio evaluará la solicitud de cancelación y, de acuerdo con sus políticas internas, podrá optar por cancelar el pedido o desestimar la solicitud en caso de que el pedido se haya entregado en tiempo y forma. Los costos o recargos asociados a la cancelación, en caso de aplicarse, serán determinados exclusivamente por el Comercio.",
+        "En caso de que el Usuario considere que se ha cometido una irregularidad en el proceso de cancelación, podrá elevar su reclamo ante las autoridades de protección al consumidor.",
+        "Dores actúa únicamente como intermediario facilitador en la comunicación entre el Usuario y el Comercio, y no interviene en la determinación de los costos, recargos o en la resolución de disputas relacionadas con las cancelaciones."
+      ]
+    },
+    {
+      "title": "6. Pagos",
+      "subsections": [
+        {
+          "title": "Pagos en Efectivo",
+          "content": [
+            "Dores no participa del proceso de cobro en efectivo; únicamente registra la confirmación de pago una vez que el Comercio notifica la entrega del producto."
+          ]
+        },
+        {
+          "title": "Pagos en Línea",
+          "content": [
+            "Dores hace uso de una API de terceros para procesar pagos en línea (tarjetas de crédito, débito u otros métodos).",
+            "Una vez realizado el pago, se emite un comprobante electrónico al Usuario, el cual también está disponible para el Comercio a través de la Plataforma.",
+            "Los montos indicados en la Plataforma son S.E.U.O. (Salvo Error u Omisión); se recomienda corroborar el importe final antes de confirmar la operación."
+          ]
+        },
+        {
+          "title": "Responsabilidad sobre los Pagos",
+          "content": [
+            "El manejo y la veracidad de los importes son responsabilidad del Comercio y del Usuario.",
+            "Dores no asume responsabilidad por demoras, inconvenientes o reembolsos relacionados con transacciones monetarias, salvo en lo que corresponda al adecuado funcionamiento de la interfaz de pago en línea."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "7. Registro y Cuenta",
+      "content": [
+        "El Usuario debe proporcionar información veraz, exacta y actualizada al momento de registrarse, conforme a lo establecido en la Ley de Defensa del Consumidor (Ley N.º 24.240).",
+        "Dores se reserva el derecho de suspender o eliminar cuentas en caso de actividad fraudulenta o de violación a estos términos y/o a la normativa aplicable."
+      ]
+    },
+    {
+      "title": "8. Limitación de Responsabilidad",
+      "subsections": [
+        {
+          "title": "Responsabilidad de la Plataforma",
+          "content": [
+            "Dores no es responsable por incumplimientos en la entrega de pedidos, retrasos, faltantes, reclamos de calidad o cualquier otro problema asociado a la relación directa entre el Usuario y el Comercio.",
+            "El Usuario reconoce que el servicio de delivery no es provisto por la Plataforma, sino por el Comercio o por terceros contratados por este."
+          ]
+        },
+        {
+          "title": "Indemnidad",
+          "content": [
+            "El Usuario se compromete a mantener indemne a Dores, sus representantes y empleados, de cualquier reclamación, daño, perjuicio o responsabilidad que surja de la interacción entre Usuario y Comercio."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "9. Propiedad Intelectual",
+      "content": [
+        "Todos los derechos sobre la Plataforma y su contenido están reservados.",
+        "La Plataforma es propiedad de Braian Leandro Marquez, CUIT: 23-39228746-9, con domicilio en calle 158 Nº 3711, Posadas, Misiones, Argentina.",
+        "El uso no autorizado de la marca, diseño, software o cualquier contenido de la Plataforma podrá dar lugar a las acciones legales correspondientes según el Código Civil y Comercial de la Nación y la normativa de propiedad intelectual vigente."
+      ]
+    },
+    {
+      "title": "10. Legislación Aplicable y Resolución de Disputas",
+      "subsections": [
+        {
+          "title": "Leyes Aplicables",
+          "content": [
+            "Estos Términos y Condiciones se rigen por las leyes de la República Argentina, en especial por la Ley N.º 24.240 (Defensa del Consumidor) y el Código Civil y Comercial de la Nación en todo lo no previsto en este documento.",
+            "La relación con los datos personales se rige por la Ley N.º 25.326 (Protección de Datos Personales), conforme se detalla en la Política de Privacidad."
+          ]
+        },
+        {
+          "title": "Resolución de Disputas",
+          "content": [
+            "Cualquier disputa relacionada con estos Términos y Condiciones o con el uso de la Plataforma se resolverá preferentemente ante los organismos de Defensa del Consumidor de Argentina y/o los tribunales competentes, según corresponda.",
+            "La nulidad total o parcial de alguna cláusula de estos Términos no afectará la validez del resto de las disposiciones."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "11. Modificaciones",
+      "content": [
+        "Dores se reserva el derecho de actualizar o modificar estos Términos y Condiciones en cualquier momento, notificando a los Usuarios a través de la Plataforma o por correo electrónico.",
+        "El uso continuado de la Plataforma tras dichas modificaciones implica la aceptación de los nuevos términos."
+      ]
+    },
+    {
+      "title": "12. Información de Contacto",
+      "content": [
+        "Para cualquier consulta o reclamo relacionado con la Plataforma, el Usuario puede comunicarse con Dores a través de:",
+        "Correo electrónico: administracion@Dores.com.ar",
+        "Teléfono: +54 3765 174804"
+      ]
+    }
+  ]
+}

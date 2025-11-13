@@ -1,0 +1,84 @@
+{
+  "expo": {
+    "name": "Dores",
+    "slug": "dores",
+    "version": "1.0.0",
+    "web": {
+      "favicon": "./assets/logo-mobile.png"
+    },
+    "experiments": {
+      "tsconfigPaths": true
+    },
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#fcfdfd",
+          "image": "./assets/splash.png",
+          "resizeMode": "contain",
+          "imageWidth": 200
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Permitir a $(PRODUCT_NAME) usar tu ubicación."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/logo-mobile.png",
+          "color": "#ffffff"
+        }
+      ]
+    ],
+    "orientation": "portrait",
+    "icon": "./assets/logo-mobile.png",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.dore.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "INTERNET",
+        "NOTIFICATIONS",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ],
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/logo-mobile.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.dores.app"
+    },
+    "notification": {
+      "icon": "./assets/logo-mobile.png",
+      "color": "#ffffff",
+      "iosDisplayInForeground": true,
+      "androidMode": "default"
+    },
+    "newArchEnabled": true,
+    "owner": "sensitiky",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/548b5fb3-afc2-4cbd-9558-79e5f1d1bf97"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "76a28474-949d-4c68-b1dd-1279255005d4"
+      }
+    }
+  }
+}

@@ -1,10 +1,8 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Alert } from 'react-native';
-
 import { useCategories } from './useCategory';
 import { useCheckout } from './useCheckout';
 import { useCommerces } from './useCommerces';
-
 import { Address } from '~/domain/entities/addressEntity';
 import { Banner } from '~/domain/entities/bannerEntity';
 import { BannerService } from '~/domain/services/bannerService';
@@ -30,6 +28,10 @@ export const useHome = () => {
   const [banners, setBanners] = useState<Banner[]>([]);
   const [loadingAddress, setLoadingAddress] = useState<boolean>(false);
   const loading = loadingUser || loadingCommerces || loadingCategories;
+  const hasMountedRef = useRef(false);
+  const isFetchingBanners = useRef(false);
+  const [lastBannerFetchTime, setLastBannerFetchTime] = useState<number>(0);
+  const BANNERS_CACHE_DURATION = 5 * 60 * 1000; // 5 minutos
 
   const handleAddressPress = useCallback(() => {
     setAddressListModalVisible(true);
@@ -103,38 +105,58 @@ export const useHome = () => {
     },
     [addresses, deliveryAddressService, handleAddressSelected]
   );
-  const fetchBanners = useCallback(async () => {
-    try {
-      console.log('🔄 Fetching banners...');
-      const response = await bannerService.getBanners();
-      console.log('✅ Banners fetched:', response);
-      console.log('📊 Number of banners:', response?.length);
-      if (Array.isArray(response)) {
-        setBanners(response);
-      } else {
-        console.warn('⚠️ Response is not an array:', response);
-        setBanners([]);
+  const fetchBanners = useCallback(
+    async (forceRefresh = false) => {
+      const now = Date.now();
+
+      if (!forceRefresh && now - lastBannerFetchTime < BANNERS_CACHE_DURATION && banners.length > 0) {
+        console.log('📦 Usando datos en caché de banners');
+        return;
       }
-    } catch (error) {
-      console.error('❌ Error fetching banners:', error);
-      console.error('❌ Error message:', error?.message);
-      console.error('❌ Error stack:', error?.stack);
-      // No establecer banners vacíos si hay error de autenticación
-      // Los banners pueden cargarse después cuando el usuario se autentique
-      if (!error?.message?.includes('Authentication required')) {
-        setBanners([]);
+
+      if (isFetchingBanners.current) {
+        console.log('⏳ Ya hay una carga de banners en progreso');
+        return;
       }
-    }
-  }, [bannerService]);
+
+      isFetchingBanners.current = true;
+      try {
+        console.log('🔄 Fetching banners...');
+        const response = await bannerService.getBanners();
+        console.log('✅ Banners fetched:', response);
+        console.log('📊 Number of banners:', response?.length);
+        if (Array.isArray(response)) {
+          setBanners(response);
+          setLastBannerFetchTime(now);
+        } else {
+          console.warn('⚠️ Response is not an array:', response);
+          setBanners([]);
+        }
+      } catch (error) {
+        console.error('❌ Error fetching banners:', error);
+        console.error('❌ Error message:', (error as any)?.message);
+        console.error('❌ Error stack:', (error as any)?.stack);
+        if (!(error as any)?.message?.includes('Authentication required')) {
+          setBanners([]);
+        }
+      } finally {
+        isFetchingBanners.current = false;
+      }
+    },
+    [bannerService, lastBannerFetchTime, banners.length]
+  );
 
   useEffect(() => {
+    // Ejecutar solo una vez al montar el componente
+    if (hasMountedRef.current) return;
+    hasMountedRef.current = true;
     fetchAddresses();
     fetchBanners();
-  }, [fetchAddresses, fetchBanners]);
+  }, []);
 
   return {
     banners,
-    refetchBanners: fetchBanners,
+    refetchBanners: () => fetchBanners(true),
     commerces,
     categories,
     addresses,

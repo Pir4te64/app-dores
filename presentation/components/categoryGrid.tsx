@@ -95,6 +95,7 @@ export const CategoryGrid = ({
             footerText={item.name}
             onPress={() => onCategoryPress?.(item)}
             categoryType={item.name}
+            image={item.icon ? item.icon.replace(/`/g, '') : undefined}
           />
         ))}
 

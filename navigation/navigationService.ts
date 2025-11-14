@@ -7,7 +7,7 @@ export const navigationRef = createNavigationContainerRef();
  */
 export const NavigationService = {
   /**
-   * Navigate to a screen
+   * Navigate to a screen 
    */
   navigate<T extends object>(name: string, params?: T): void {
     if (navigationRef.isReady()) {

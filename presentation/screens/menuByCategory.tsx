@@ -1,10 +1,10 @@
 import { useRoute, RouteProp, useNavigation, NavigationProp } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, FlatList, Alert, SafeAreaView, Image } from 'react-native';
+import { View, Text, ActivityIndicator, FlatList, Alert, SafeAreaView } from 'react-native';
 
-import { Commerce } from '~/domain/entities/commerceEntity';
-import { CommerceService } from '~/domain/services/commerceService';
-import { SearchBar } from '~/presentation/components/searchBar';
+import { Menu } from '~/domain/entities/menuEntity';
+import { MenuService } from '~/domain/services/menuService';
+import { CardMenuList } from '~/presentation/components/cardMenuList';
 
 type RootStackParamList = {
   MenuByCategory: { categoryId: number };
@@ -15,15 +15,16 @@ export default function MenuByCategory() {
   const route = useRoute<RouteProp<RootStackParamList, 'MenuByCategory'>>();
   const { categoryId } = route.params;
   const navigate = useNavigation<NavigationProp<RootStackParamList>>();
-  const commmerceService = CommerceService.getInstance();
-  const [menus, setMenus] = useState<Commerce[]>([]);
+  const menuService = MenuService.getInstance();
+  const [menus, setMenus] = useState<Menu[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchMenus = async () => {
       try {
-        const commerces = await commmerceService.getCommerceByCategory(categoryId);
-        setMenus(commerces);
+        const response = await menuService.getMenuByCategory(categoryId);
+        const items = response.content.map((m) => new Menu(m));
+        setMenus(items);
       } catch {
         Alert.alert('Error', 'No se pudieron cargar los menús');
       } finally {
@@ -40,33 +41,21 @@ export default function MenuByCategory() {
       </View>
     );
   }
-  const renderCommerceItem = ({ item }: { item: Commerce }) => (
-    <View
-      className="mx-4 size-40"
-      onTouchStart={() => navigate.navigate('CommerceDetail', { commerceId: item.id })}>
-      <View className="aspect-[4/3] w-full">
-        <Image
-          source={{ uri: item.coverImage }}
-          className="h-full w-full rounded-xl"
-          style={{ objectFit: 'cover' }}
-        />
-      </View>
-      <Text className="mt-1 text-center text-sm font-medium">{item.businessName}</Text>
-    </View>
+  const renderMenuItem = ({ item }: { item: Menu }) => (
+    <CardMenuList menu={item} commerceId={item.commerceId} commerceStatus />
   );
   return (
     <SafeAreaView>
       <View className="gap-4">
-        <View className="py-2">
-          <SearchBar />
-        </View>
         {menus.length > 0 ? (
           <FlatList
             data={menus}
-            renderItem={renderCommerceItem}
-            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderMenuItem}
+            keyExtractor={(item) => `menu-${item.commerceId}-${item.id}`}
             numColumns={2}
-            columnWrapperStyle={{ justifyContent: 'space-around', gap: 10, marginBottom: 10 }}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingHorizontal: 8, paddingBottom: 20 }}
+            columnWrapperStyle={{ justifyContent: 'space-between' }}
           />
         ) : (
           <View className="flex items-center justify-center">

@@ -33,6 +33,9 @@ type RootStackParamList = {
   Subcategories: { categoryName: string; categoryId: number };
   MenuByCategory: { categoryId: number; subcategoryName?: string };
   CommerceList: undefined;
+  CommerceDetail: { commerceId: number };
+  AllMenus: undefined;
+  CategoryList: undefined;
 };
 
 export default function Home() {
@@ -135,7 +138,7 @@ export default function Home() {
             backgroundColor: theme.backgroundColor,
             height: 40,
           }}
-          onPress={() => router.navigate('CommerceList')}>
+          onPress={() => router.navigate('CommerceDetail', { commerceId: 4 })}>
           <GlobalText>¿Qué quieres comer hoy?</GlobalText>
           <Search color="gray" />
         </TouchableOpacity>
@@ -143,12 +146,12 @@ export default function Home() {
           <CategoryGrid
             categories={categories}
             onCategoryPress={(category) =>
-              router.navigate('Subcategories', {
-                categoryName: category.name,
+              router.navigate('MenuByCategory', {
                 categoryId: category.id,
+                subcategoryName: undefined,
               })
             }
-            onViewAllPress={() => router.navigate('CommerceList')}
+            onViewAllPress={() => router.navigate('CategoryList')}
           />
 
           {/* Banner Carousel */}
@@ -159,11 +162,11 @@ export default function Home() {
           )}
 
           <View className="mb-4 flex-row justify-between px-4">
-            <GlobalText className="text-lg font-medium">Productos Destacados</GlobalText>
+          <GlobalText className="text-lg font-medium">Productos</GlobalText>
             <GlobalText
               className="text-lg font-medium text-[#DA2919]"
-              onPress={() => router.navigate('CommerceList')}>
-              Ver todos
+          onPress={() => router.navigate('CommerceDetail', { commerceId: 4 })}>
+          Ver todos
             </GlobalText>
           </View>
 

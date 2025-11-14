@@ -12,6 +12,8 @@ import Checkout from '~/presentation/screens/checkout';
 import { CommerceDetail } from '~/presentation/screens/commerceDetail';
 import { CommerceList } from '~/presentation/screens/commerceList';
 import Home from '~/presentation/screens/home';
+import CategoryList from '~/presentation/screens/categoryList';
+import AllMenus from '~/presentation/screens/allMenus';
 import MenuByCategory from '~/presentation/screens/menuByCategory';
 import { MenuItem } from '~/presentation/screens/menuItem';
 import { OrderDetail } from '~/presentation/screens/orderDetail';
@@ -60,6 +62,28 @@ const createStackNavigator = (screens: ScreenConfig[], initialRouteName: string)
 const homeScreens: ScreenConfig[] = [
   { name: 'HomeScreen', component: Home, options: { title: 'Inicio' } },
   {
+    name: 'AllMenus',
+    component: AllMenus,
+    options: {
+      headerShown: true,
+      headerBackTitle: '',
+      headerShadowVisible: false,
+      title: 'Menús',
+      headerStyle: { backgroundColor: '#fffcfa' },
+    },
+  },
+  {
+    name: 'CategoryList',
+    component: CategoryList,
+    options: {
+      headerShown: true,
+      headerBackTitle: '',
+      headerShadowVisible: false,
+      title: 'Categorías',
+      headerStyle: { backgroundColor: '#fffcfa' },
+    },
+  },
+  {
     name: 'Subcategories',
     component: Subcategories,
     options: {
@@ -77,7 +101,7 @@ const homeScreens: ScreenConfig[] = [
       headerShown: true,
       headerBackTitle: '',
       headerShadowVisible: false,
-      title: 'Comercios',
+      title: 'Menús',
       headerStyle: { backgroundColor: '#fffcfa' },
     },
   },

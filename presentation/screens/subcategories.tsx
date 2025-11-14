@@ -66,18 +66,7 @@ export default function Subcategories() {
         />
       </View>
 
-      {/* Botón de ver todos los comercios */}
-      <View className="px-4 pb-4">
-        <View
-          className="rounded-xl py-3 px-4"
-          style={{ backgroundColor: theme.primaryColor }}>
-          <GlobalText
-            className="text-center text-white font-bold text-base"
-            onPress={() => navigate.navigate('MenuByCategory', { categoryId })}>
-            Ver todos los comercios
-          </GlobalText>
-        </View>
-      </View>
+      {/* Botón de ver todos los comercios eliminado según requerimiento */}
     </SafeAreaView>
   );
 }

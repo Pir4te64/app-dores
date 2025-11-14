@@ -11,12 +11,14 @@ interface CategoryGridProps {
   categories: Category[];
   onCategoryPress?: (category: Category) => void;
   onViewAllPress?: () => void;
+  fullList?: boolean;
 }
 
 export const CategoryGrid = ({
   categories,
   onViewAllPress,
   onCategoryPress,
+  fullList = false,
 }: CategoryGridProps) => {
   const theme = getThemedStyles();
   const { width } = Dimensions.get('window');
@@ -25,8 +27,9 @@ export const CategoryGrid = ({
   const itemsPerRow = 3;
   const rowsToShow = 2;
 
-  const visibleItems =
-    itemsPerRow * rowsToShow - (categories.length > itemsPerRow * rowsToShow ? 1 : 0);
+  const visibleItems = fullList
+    ? categories.length
+    : itemsPerRow * rowsToShow - (categories.length > itemsPerRow * rowsToShow ? 1 : 0);
 
   const ViewAllCard = () => (
     <TouchableOpacity
@@ -95,7 +98,7 @@ export const CategoryGrid = ({
           />
         ))}
 
-        <ViewAllCard />
+        {!fullList && <ViewAllCard />}
       </View>
     </View>
   );

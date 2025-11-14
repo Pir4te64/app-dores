@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 
 import { Menu } from '~/domain/entities/menuEntity';
-import { CommerceService } from '~/domain/services/commerceService';
 import { MenuService } from '~/domain/services/menuService';
 
 export const useMenus = () => {
@@ -12,7 +11,6 @@ export const useMenus = () => {
   const isFetching = useRef(false);
 
   const menuService = MenuService.getInstance();
-  const commerceService = CommerceService.getInstance();
 
   // Cache de 5 minutos para evitar recargas innecesarias
   const CACHE_DURATION = 5 * 60 * 1000; // 5 minutos
@@ -38,44 +36,35 @@ export const useMenus = () => {
       setError(null);
 
       try {
-        console.log('🔄 Cargando menús...');
+        console.log('🔄 Cargando menús del comercio ID 4 y asegurando al menos 2...');
 
-        // Primero obtener todos los comercios
-        const commerces = await commerceService.getAllCommerces();
+        // Acumular productos hasta tener al menos 2
+        const pageSize = 10;
+        let pageNumber = 0;
+        let totalPages = 1;
+        const aggregated: Menu[] = [];
 
-        // Obtener menús de los primeros 3 comercios para la vista principal
-        const limitedCommerces = commerces.slice(0, 3);
-        const allMenus: Menu[] = [];
+        do {
+          const response = await menuService.getAllMenus({
+            commerceId: 4,
+            pageNumber,
+            pageSize,
+            sortDirection: 'DESC',
+          });
+          totalPages = response.totalPages ?? 1;
+          const items = response.content.map((item) => new Menu(item));
+          aggregated.push(...items);
+          pageNumber += 1;
+        } while (aggregated.length < 2 && pageNumber < totalPages);
 
-        for (const commerce of limitedCommerces) {
-          try {
-            const response = await menuService.getAllMenus({
-              pageNumber: 0,
-              pageSize: 6, // 6 productos por comercio
-              commerceId: commerce.id,
-              sortDirection: 'DESC',
-            });
+        // Seleccionar 2 productos aleatorios (o menos si no hay suficiente)
+        const selected = aggregated.length >= 2
+          ? [...aggregated].sort(() => Math.random() - 0.5).slice(0, 2)
+          : aggregated;
 
-            const menuItems = response.content.map((item) => new Menu(item));
-            allMenus.push(...menuItems);
-          } catch (err) {
-            console.warn(`Error loading menus for commerce ${commerce.id}:`, err);
-          }
-        }
-
-        // Eliminar duplicados basándose en el ID del menú y commerceId
-        const uniqueMenus = allMenus.filter(
-          (menu, index, self) =>
-            index === self.findIndex((m) => m.id === menu.id && m.commerceId === menu.commerceId)
-        );
-
-        console.log('📊 Total menus before deduplication:', allMenus.length);
-        console.log('📊 Unique menus after deduplication:', uniqueMenus.length);
-
-        // Limitar a 20 productos totales
-        setMenus(uniqueMenus.slice(0, 20));
+        setMenus(selected);
         setLastFetchTime(now);
-        console.log('✅ Menús cargados exitosamente');
+        console.log(`✅ Menús seleccionados: ${selected.length} del comercio 4`);
       } catch (err) {
         console.error('❌ Error fetching menus:', err);
         setError('No se pudieron cargar los productos');
@@ -84,7 +73,7 @@ export const useMenus = () => {
         isFetching.current = false;
       }
     },
-    [lastFetchTime, menus.length, menuService, commerceService]
+    [lastFetchTime, menus.length, menuService]
   );
 
   useEffect(() => {

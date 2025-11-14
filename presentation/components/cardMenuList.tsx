@@ -14,16 +14,18 @@ interface CardMenuListProps {
   menu: Menu;
   commerceId: number;
   commerceStatus?: boolean;
+  navigateToCommerce?: boolean;
 }
 
 type RootStackParamList = {
   MenuItem: { item: Menu; commerceId: number };
+  CommerceDetail: { commerceId: number };
 };
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = (width - 48) / 2; // 2 columnas con espaciado
 
-export const CardMenuList = ({ menu, commerceId, commerceStatus = true }: CardMenuListProps) => {
+export const CardMenuList = ({ menu, commerceId, commerceStatus = true, navigateToCommerce = false }: CardMenuListProps) => {
   const theme = getThemedStyles();
   const navigate = useNavigation<NavigationProp<RootStackParamList>>();
 
@@ -31,7 +33,11 @@ export const CardMenuList = ({ menu, commerceId, commerceStatus = true }: CardMe
     <View className="mx-2 mb-4">
       <TouchableOpacity
         disabled={!commerceStatus}
-        onPress={() => navigate.navigate('MenuItem', { item: menu, commerceId })}
+        onPress={() =>
+          navigateToCommerce
+            ? navigate.navigate('CommerceDetail', { commerceId })
+            : navigate.navigate('MenuItem', { item: menu, commerceId })
+        }
         activeOpacity={0.8}>
         <View
           className={`rounded-2xl bg-white shadow-lg ${!commerceStatus ? 'opacity-50' : ''}`}

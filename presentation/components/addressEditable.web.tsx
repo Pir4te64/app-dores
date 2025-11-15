@@ -11,30 +11,40 @@ import {
   Switch,
   SafeAreaView,
 } from 'react-native';
-import { MapboxPicker } from '~/presentation/components/mapboxPicker';
 
 import { Address } from '~/domain/entities/addressEntity';
 import { useAddressForm } from '~/hooks/useLocation';
 
 interface AddressFormProps {
+  title: string;
+  location: {
+    latitude: string;
+    longitude: string;
+    latitudeDelta: number;
+    longitudeDelta: number;
+  };
+  floor?: string;
+  reference?: string;
   visible: boolean;
   onClose: () => void;
-  onAddressAdded: (newAddress?: Address) => void;
+  onAddressEdited: (newAddress?: Address) => void;
 }
 
-export const AddressForm = ({ visible, onClose, onAddressAdded }: AddressFormProps) => {
+export const AddressEditableForm = ({
+  title,
+  location,
+  floor,
+  reference,
+  visible,
+  onClose,
+  onAddressEdited,
+}: AddressFormProps) => {
   const {
-    title,
     setTitle,
-    floor,
     setFloor,
-    reference,
     setReference,
-    showMap,
-    setShowMap,
     searchAddress,
     setSearchAddress,
-    location,
     locationPermission,
     requestLocationPermission,
     addressDetails,
@@ -45,27 +55,19 @@ export const AddressForm = ({ visible, onClose, onAddressAdded }: AddressFormPro
     loading,
     handleSubmit,
     updateLocationWithAddress,
-  } = useAddressForm(visible, onAddressAdded, onClose);
+  } = useAddressForm(visible, onAddressEdited, onClose);
 
-  const [showMapbox, setShowMapbox] = React.useState(false);
-
-  const handleShowMap = () => {
+  const handleUseMyLocation = () => {
     requestLocationPermission();
   };
 
-  const handleMapPress = async (e: any) => {
-    const { coordinate } = e.nativeEvent;
-    await updateLocationWithAddress(coordinate);
+  const validatedLocation = {
+    latitude: Number(location.latitude),
+    longitude: Number(location.longitude),
+    latitudeDelta: 0.01,
+    longitudeDelta: 0.01,
   };
 
-  const openMapbox = () => {
-    setShowMapbox(true);
-  };
-
-  const handleMapboxSelect = async ({ latitude, longitude }: { latitude: number; longitude: number }) => {
-    await updateLocationWithAddress({ latitude, longitude, latitudeDelta: 0.01, longitudeDelta: 0.01 });
-    setShowMapbox(false);
-  };
   return (
     <View>
       <Modal
@@ -112,8 +114,6 @@ export const AddressForm = ({ visible, onClose, onAddressAdded }: AddressFormPro
                 </TouchableOpacity>
               </View>
 
-              {/* Botón de Mapbox ocultado temporalmente */}
-
               {addressDetails && (
                 <View className="mb-4 rounded-lg bg-gray-100 p-3">
                   <Text className="text-base font-medium">Ubicación seleccionada:</Text>
@@ -154,21 +154,27 @@ export const AddressForm = ({ visible, onClose, onAddressAdded }: AddressFormPro
 
               <TouchableOpacity
                 className="mb-4 rounded-lg bg-gray-100 p-4"
-                onPress={handleShowMap}
-              >
+                onPress={handleUseMyLocation}>
                 <Text className="text-center text-base font-medium">
                   Usar mi ubicación actual
                 </Text>
               </TouchableOpacity>
 
+              <View className="mb-4 rounded-lg bg-gray-50 p-3">
+                <Text className="text-sm text-gray-600">
+                  El mapa no está disponible en la versión web. Puedes buscar una dirección
+                  o usar tu ubicación actual.
+                </Text>
+              </View>
+
               <TouchableOpacity
-                className="mt-4 rounded-full bg-[#FFDE00] p-4"
+                className="mt-4 rounded-full bg-[#DA2919] p-4"
                 onPress={handleSubmit}
                 disabled={loading}>
                 {loading ? (
                   <ActivityIndicator color="white" />
                 ) : (
-                  <Text className="text-center text-lg font-semibold text-black">
+                  <Text className="text-center text-lg font-semibold text-white">
                     Agregar dirección
                   </Text>
                 )}
@@ -177,13 +183,6 @@ export const AddressForm = ({ visible, onClose, onAddressAdded }: AddressFormPro
           </ScrollView>
         </SafeAreaView>
       </Modal>
-
-      <MapboxPicker
-        visible={showMapbox}
-        onClose={() => setShowMapbox(false)}
-        onSelect={handleMapboxSelect}
-        initialCoords={{ latitude: location.latitude, longitude: location.longitude }}
-      />
     </View>
   );
 };

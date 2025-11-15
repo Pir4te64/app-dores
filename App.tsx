@@ -7,7 +7,6 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { View, Platform } from 'react-native';
 import { enableScreens } from 'react-native-screens';
 import * as Font from 'expo-font';
-
 import { ErrorFallback } from '~/infrastructure/interceptors/error';
 import { navigationRef } from '~/navigation/navigationService';
 import { RootNavigation } from '~/navigation/root';
@@ -28,14 +27,11 @@ const ThemedApp = () => {
   const [appIsReady, setAppIsReady] = useState(false);
   const { loadingUser, fetchUserData } = useUser();
   const [fontsLoaded, setFontsLoaded] = useState(false);
-  
-  // Aplicar fuente globalmente
   useGlobalFont();
 
   useEffect(() => {
     const loadFonts = async () => {
       try {
-        // Cargar fuentes personalizadas de forma segura
         await Font.loadAsync({
           'LuckiestGuy-Regular': require('./assets/fonts/LuckiestGuy-Regular.ttf'),
         });
@@ -43,7 +39,6 @@ const ThemedApp = () => {
         setFontsLoaded(true);
       } catch (error) {
         console.warn('⚠️ Error cargando fuentes personalizadas, usando fallback:', error);
-        // Fallback a fuentes del sistema
         setFontsLoaded(true);
       }
     };

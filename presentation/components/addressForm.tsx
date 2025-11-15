@@ -11,7 +11,7 @@ import {
   Switch,
   SafeAreaView,
 } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import { MapboxPicker } from '~/presentation/components/mapboxPicker';
 
 import { Address } from '~/domain/entities/addressEntity';
 import { useAddressForm } from '~/hooks/useLocation';
@@ -47,14 +47,24 @@ export const AddressForm = ({ visible, onClose, onAddressAdded }: AddressFormPro
     updateLocationWithAddress,
   } = useAddressForm(visible, onAddressAdded, onClose);
 
+  const [showMapbox, setShowMapbox] = React.useState(false);
+
   const handleShowMap = () => {
     requestLocationPermission();
-    setShowMap(true);
   };
 
   const handleMapPress = async (e: any) => {
     const { coordinate } = e.nativeEvent;
     await updateLocationWithAddress(coordinate);
+  };
+
+  const openMapbox = () => {
+    setShowMapbox(true);
+  };
+
+  const handleMapboxSelect = async ({ latitude, longitude }: { latitude: number; longitude: number }) => {
+    await updateLocationWithAddress({ latitude, longitude, latitudeDelta: 0.01, longitudeDelta: 0.01 });
+    setShowMapbox(false);
   };
   return (
     <View>
@@ -102,6 +112,14 @@ export const AddressForm = ({ visible, onClose, onAddressAdded }: AddressFormPro
                 </TouchableOpacity>
               </View>
 
+              <TouchableOpacity
+                className="mb-4 rounded-lg bg-gray-100 p-4 opacity-50"
+                onPress={openMapbox}
+                disabled
+              >
+                <Text className="text-center text-base font-medium">Abrir mapa</Text>
+              </TouchableOpacity>
+
               {addressDetails && (
                 <View className="mb-4 rounded-lg bg-gray-100 p-3">
                   <Text className="text-base font-medium">Ubicación seleccionada:</Text>
@@ -140,41 +158,14 @@ export const AddressForm = ({ visible, onClose, onAddressAdded }: AddressFormPro
                 />
               </View>
 
-              {!showMap ? (
-                <TouchableOpacity
-                  className="mb-4 rounded-lg bg-gray-100 p-4"
-                  onPress={handleShowMap}>
-                  <Text className="text-center text-base font-medium">
-                    Usar mi ubicación actual
-                  </Text>
-                </TouchableOpacity>
-              ) : (
-                <View className="mb-4 h-52 overflow-hidden rounded-lg">
-                  {locationPermission ? (
-                    <MapView
-                      key={showMap.toString()}
-                      style={{ width: '100%', height: 200 }}
-                      initialRegion={{
-                        latitude: location.latitude,
-                        longitude: location.longitude,
-                        latitudeDelta: 0.01,
-                        longitudeDelta: 0.01,
-                      }}
-                      onPress={handleMapPress}>
-                      <Marker
-                        coordinate={location}
-                        draggable
-                        onDragEnd={(e) => setLocation(location)}
-                      />
-                    </MapView>
-                  ) : (
-                    <View className="flex-1 items-center justify-center">
-                      <ActivityIndicator size="large" color="#DA2919" />
-                      <Text className="mt-2 text-center">Solicitando permisos de ubicación...</Text>
-                    </View>
-                  )}
-                </View>
-              )}
+              <TouchableOpacity
+                className="mb-4 rounded-lg bg-gray-100 p-4"
+                onPress={handleShowMap}
+              >
+                <Text className="text-center text-base font-medium">
+                  Usar mi ubicación actual
+                </Text>
+              </TouchableOpacity>
 
               <TouchableOpacity
                 className="mt-4 rounded-full bg-[#FFDE00] p-4"
@@ -192,6 +183,13 @@ export const AddressForm = ({ visible, onClose, onAddressAdded }: AddressFormPro
           </ScrollView>
         </SafeAreaView>
       </Modal>
+
+      <MapboxPicker
+        visible={showMapbox}
+        onClose={() => setShowMapbox(false)}
+        onSelect={handleMapboxSelect}
+        initialCoords={{ latitude: location.latitude, longitude: location.longitude }}
+      />
     </View>
   );
 };

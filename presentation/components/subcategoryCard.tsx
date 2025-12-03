@@ -59,7 +59,7 @@ export const SubcategoryCard: React.FC<SubcategoryCardProps> = ({
           />
         </View>
         
-        {/* Texto de la subcategoría */}
+        {/* Texto de la subcategoría  */}
         <View className="flex-1 items-center justify-center">
           <GlobalText
             className="text-center text-base font-bold mb-1"

@@ -69,9 +69,9 @@ export const OrderList = () => {
             <Text style={{ color: theme.primaryColor }}>
               ${item.total + item.costFee + item.costDelivery}
             </Text>
-            {item.delivery && (
+            {item.delivery && item.deliveryAddress?.title ? (
               <Text className="text-sm text-gray-500">{item.deliveryAddress.title}</Text>
-            )}
+            ) : null}
           </View>
           <View>
             <View className="items-end">

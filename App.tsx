@@ -11,6 +11,7 @@ import { ErrorFallback } from '~/infrastructure/interceptors/error';
 import { navigationRef } from '~/navigation/navigationService';
 import { RootNavigation } from '~/navigation/root';
 import { CartProvider } from '~/presentation/context/cartContext';
+import { OrderEventsProvider } from '~/presentation/context/orderContext';
 import { NotificationProvider } from '~/presentation/context/notificationContext';
 import { PushNotificationProvider } from '~/presentation/context/pushNotificationContext';
 import { UserProvider, useUser } from '~/presentation/context/userContext';
@@ -114,12 +115,14 @@ export default function App() {
           <PushNotificationProvider>
             <NotificationProvider>
               <AddressProvider>
-                <ThemedApp />
-                <StatusBar
-                  hidden={false}
-                  translucent={false}
-                  backgroundColor={theme.backgroundColor}
-                />
+                <OrderEventsProvider>
+                  <ThemedApp />
+                  <StatusBar
+                    hidden={false}
+                    translucent={false}
+                    backgroundColor={theme.backgroundColor}
+                  />
+                </OrderEventsProvider>
               </AddressProvider>
             </NotificationProvider>
           </PushNotificationProvider>

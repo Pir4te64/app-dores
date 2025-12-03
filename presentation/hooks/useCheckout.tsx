@@ -8,6 +8,7 @@ import { MenuItem } from '~/domain/repositories/iorderRepository';
 import { OrderService } from '~/domain/services/orderService';
 import { useCart } from '~/presentation/context/cartContext';
 import { useUser } from '~/presentation/context/userContext';
+import { useOrderEvents } from '~/presentation/context/orderContext';
 
 export const useCheckout = () => {
   const { items, orderId, clearCart, updateItemQuantity } = useCart();
@@ -21,6 +22,7 @@ export const useCheckout = () => {
   const [orderItemIdMap, setOrderItemIdMap] = useState<Record<number, number>>({});
   const router = useNavigation();
   const orderService = OrderService.getInstance();
+  const { notifyOrdersChanged } = useOrderEvents();
 
   const calculateTotal = useCallback(
     (currentOrder: Order) => {
@@ -230,6 +232,8 @@ export const useCheckout = () => {
       }
 
       const orderPayment = await orderService.createOrderPayment(orderId!, isCashPayment);
+      // Notificar para refrescar la lista de pedidos
+      notifyOrdersChanged();
       orderPayment.checkoutOrder?.paymentLink != null
         ? await openLink(orderPayment.checkoutOrder?.paymentLink!)
         : router.goBack();
@@ -252,7 +256,10 @@ export const useCheckout = () => {
   const handleCancelOrder = useCallback(async () => {
     if (!orderId) throw Alert.alert('Disculpe', 'No pudimos cancelar su pedido.');
     const response = await orderService.cancelOrder(orderId);
-    if (response.description.includes(`Order with ID ${orderId} deleted successfully`)) clearCart();
+    if (response.description.includes(`Order with ID ${orderId} deleted successfully`)) {
+      clearCart();
+      notifyOrdersChanged();
+    }
   }, [orderId]);
 
   return {

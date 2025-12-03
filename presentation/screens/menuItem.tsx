@@ -1,5 +1,5 @@
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   TextInput,
   TouchableOpacity,
@@ -15,19 +15,45 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Menu } from '~/domain/entities/menuEntity';
 import { CreateOrderBody } from '~/domain/repositories/iorderRepository';
 import { OrderService } from '~/domain/services/orderService';
+import { CommerceService } from '~/domain/services/commerceService';
 import { useAddress } from '~/hooks/useAddress';
 import { useCart } from '~/presentation/context/cartContext';
+import { useOrderEvents } from '~/presentation/context/orderContext';
 
 export const MenuItem = () => {
   const navigation = useNavigation();
   const [count, setCount] = useState(1);
   const orderService = OrderService.getInstance();
+  const commerceService = CommerceService.getInstance();
   const [observations, setObservations] = useState('');
   const [loading, setLoading] = useState<boolean>(false);
   const route = useRoute<RouteProp<{ params: { item: Menu; commerceId: number } }, 'params'>>();
   const { item, commerceId } = route.params;
   const { addItem, setOrderId, items, clearCart } = useCart();
   const { address } = useAddress();
+  const { notifyOrdersChanged } = useOrderEvents();
+  const [isCommerceOpen, setIsCommerceOpen] = useState<boolean>(true);
+
+  // Consultar el estado del comercio (abierto/cerrado) por ID
+  useEffect(() => {
+    let mounted = true;
+    const fetchStatus = async () => {
+      try {
+        const commerce = await commerceService.getCommerceById(commerceId);
+        if (mounted) {
+          // Usamos la propiedad "active" como indicador de abierto/cerrado
+          setIsCommerceOpen(Boolean(commerce?.active));
+        }
+      } catch (e) {
+        // Ante error, por defecto consideramos cerrado para evitar pedidos inválidos
+        if (mounted) setIsCommerceOpen(false);
+      }
+    };
+    fetchStatus();
+    return () => {
+      mounted = false;
+    };
+  }, [commerceId]);
 
   const handleIncrement = () => setCount((prev) => prev + 1);
 
@@ -38,6 +64,34 @@ export const MenuItem = () => {
   const handleAddToCart = async () => {
     try {
       setLoading(true);
+
+      // Bloquear si el comercio está cerrado
+      if (!isCommerceOpen) {
+        Alert.alert('Comercio cerrado', 'Este comercio está cerrado. No es posible crear pedidos en este momento.');
+        setLoading(false);
+        return;
+      }
+
+      // Validar dirección antes de crear el pedido
+      if (!address || !address.latitude || !address.longitude || !address.id) {
+        Alert.alert(
+          'Dirección requerida',
+          'Selecciona o agrega una dirección antes de crear el pedido.',
+          [
+            {
+              text: 'Ir a direcciones',
+              onPress: () =>
+                // Navegar al tab Perfil y abrir la pantalla de direcciones
+                (navigation.getParent() as any)?.navigate('Profile', {
+                  screen: 'ProfileAddresses',
+                }),
+            },
+            { text: 'Cancelar', style: 'cancel' },
+          ]
+        );
+        setLoading(false);
+        return;
+      }
 
       if (items.length > 0) {
         const firstCommerceId = items[0].commerceId;
@@ -93,6 +147,8 @@ export const MenuItem = () => {
       const newOrder = await orderService.createOrder(orderBody);
       setOrderId(newOrder.id);
       await addItem(item, count, observations);
+      // Notificar para refrescar la lista de pedidos
+      notifyOrdersChanged();
 
       Alert.alert('Éxito', 'Producto agregado al carrito', [
         { text: 'OK', onPress: () => navigation.goBack() },
@@ -149,14 +205,20 @@ export const MenuItem = () => {
             />
           </View>
           <TouchableOpacity
-            className="mt-4 w-48 self-center rounded-full bg-[#DA2919] p-4"
-            onPress={handleAddToCart}>
+            className={`mt-4 w-48 self-center rounded-full p-4 ${isCommerceOpen ? 'bg-[#DA2919]' : 'bg-gray-300'}`}
+            onPress={handleAddToCart}
+            disabled={!isCommerceOpen}>
             {loading ? (
               <ActivityIndicator className="self-center" size="small" />
             ) : (
               <Text className="text-center text-lg font-semibold text-white">Crear pedido</Text>
             )}
           </TouchableOpacity>
+          {!isCommerceOpen && (
+            <View className="mt-2 self-center">
+              <Text className="text-center text-sm text-gray-600">El comercio está cerrado. Intenta más tarde.</Text>
+            </View>
+          )}
           <TouchableOpacity className="my-4 self-center" onPress={() => navigation.goBack()}>
             <Text className="text-lg text-gray-500 underline">Cancelar</Text>
           </TouchableOpacity>

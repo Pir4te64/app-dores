@@ -53,10 +53,9 @@ export const AddressProvider: React.FC<{ children: ReactNode }> = ({ children })
   };
 
   const deleteAddress = async (addressId: number) => {
-    if (!address) return;
-
     try {
       await deliveryAddressService.deleteDeliveryAddress(addressId);
+      await getUserAddress();
     } catch (error) {
       console.error('Error deleting address:', error);
     }

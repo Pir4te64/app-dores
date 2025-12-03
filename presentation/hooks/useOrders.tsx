@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useOrderEvents } from '~/presentation/context/orderContext';
 
 import { OrderEntity } from '~/domain/entities/orderEntity';
 import { OrderService } from '~/domain/services/orderService';
@@ -11,6 +12,7 @@ export const useOrders = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const orderService = OrderService.getInstance();
+  const { ordersRevision } = useOrderEvents();
 
   const fetchOrders = async (page: number) => {
     try {
@@ -31,6 +33,13 @@ export const useOrders = () => {
   useEffect(() => {
     fetchOrders(currentPage);
   }, [currentPage]);
+
+  // Escucha eventos de creación/actualización y refresca la página 0
+  useEffect(() => {
+    setRefreshing(true);
+    setCurrentPage(0);
+    fetchOrders(0);
+  }, [ordersRevision]);
 
   const handleRefresh = () => {
     setRefreshing(true);

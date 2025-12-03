@@ -158,9 +158,17 @@ export default function Checkout() {
 
               <View className="flex-col px-4 pt-0 pb-4 mb-12">
                 <TouchableOpacity
-                  className="rounded-full bg-[#DA2919] p-4"
+                  className="rounded-full p-4"
+                  style={{
+                    backgroundColor:
+                      loading || orderUpdating || !selectedAddress || !isCashPayment
+                        ? '#ccc'
+                        : '#DA2919',
+                    opacity:
+                      loading || orderUpdating || !selectedAddress || !isCashPayment ? 0.7 : 1,
+                  }}
                   onPress={handleCreateOrder}
-                  disabled={loading || orderUpdating || !selectedAddress}>
+                  disabled={loading || orderUpdating || !selectedAddress || !isCashPayment}>
                   {loading || orderUpdating ? (
                     <ActivityIndicator color="white" />
                   ) : (
@@ -169,6 +177,11 @@ export default function Checkout() {
                     </Text>
                   )}
                 </TouchableOpacity>
+                {!isCashPayment && (
+                  <Text className="mt-2 text-center text-sm text-gray-600">
+                    Selecciona el método de pago Efectivo para continuar
+                  </Text>
+                )}
                 <TouchableOpacity onPress={cancelOder} className="mt-2 self-center">
                   <Text className="text-lg text-gray-500 underline">Cancelar</Text>
                 </TouchableOpacity>

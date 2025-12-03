@@ -18,9 +18,7 @@ export class ApiClient {
     return ApiClient.instance;
   }
 
-  /**
-   * Generic request method that handles different HTTP methods and content types
-   */
+
   private async request<T>({
     method,
     endpoint,
@@ -60,17 +58,46 @@ export class ApiClient {
       body,
     });
     if (!response.ok) {
-      const errorResponse = await response.json();
-      throw new Error(
-        errorResponse.error.description[0] || `API call failed with status: ${response.status}`
-      );
+      let errorMessage = `API call failed with status: ${response.status}`;
+      let errorBody: any = null;
+
+      try {
+        errorBody = await response.json();
+      } catch {
+        try {
+          const text = await response.text();
+          if (text) errorMessage = text;
+        } catch {
+        }
+      }
+
+      if (errorBody) {
+        const e = errorBody.error ?? errorBody;
+        const desc = Array.isArray(e?.description) ? e.description[0] : e?.description;
+        const msg = e?.message ?? errorBody?.message ?? errorBody?.error_description;
+        errorMessage = desc || msg || errorMessage;
+      }
+
+      throw new Error(errorMessage);
     }
-    return await response.json();
+
+    if (response.status === 204) {
+      return undefined as T;
+    }
+
+    const responseContentType = response.headers.get('content-type') || '';
+    if (responseContentType.includes('application/json')) {
+      return await response.json();
+    }
+
+    const text = await response.text();
+    try {
+      return JSON.parse(text);
+    } catch {
+      return text as any as T;
+    }
   }
 
-  /**
-   * Authenticated request wrapper
-   */
   private async requestWithAuth<T>({
     method,
     endpoint,
@@ -93,7 +120,7 @@ export class ApiClient {
     );
   }
 
-  // GET methods
+
   async get<T>(endpoint: string, token?: string): Promise<T> {
     return this.request<T>({
       method: 'GET',
@@ -109,7 +136,7 @@ export class ApiClient {
     });
   }
 
-  // POST methods
+
   async post<T>(endpoint: string, data?: any, token?: string): Promise<T> {
     return this.request<T>({
       method: 'POST',
@@ -148,7 +175,6 @@ export class ApiClient {
     });
   }
 
-  // PUT methods
   async put<T>(endpoint: string, data?: any, token?: string): Promise<T> {
     return this.request<T>({
       method: 'PUT',

@@ -1,5 +1,6 @@
 import { EllipsisVertical, MapPinIcon, PlusCircleIcon } from 'lucide-react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useIsFocused } from '@react-navigation/native';
 import { View, Text, SafeAreaView, TouchableOpacity, FlatList } from 'react-native';
 
 import { AddressOptions } from '~/components/addressOptionsModal';
@@ -14,6 +15,13 @@ export function ProfileAddresses() {
   const [selectedAddress, setSelectedAddress] = useState<Address>();
   const [showOptionsModal, setShowOptionsModal] = useState<boolean>(false);
   const { addressArr, getUserAddress } = useAddress();
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    if (isFocused) {
+      getUserAddress();
+    }
+  }, [isFocused]);
 
   const handleAddAddress = () => setShowAddressForm(true);
 

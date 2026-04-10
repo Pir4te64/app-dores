@@ -12,61 +12,37 @@ export const useMenus = () => {
 
   const menuService = MenuService.getInstance();
 
-  // Cache de 5 minutos para evitar recargas innecesarias
-  const CACHE_DURATION = 5 * 60 * 1000; // 5 minutos
+  const CACHE_DURATION = 5 * 60 * 1000;
 
   const fetchMenus = useCallback(
     async (forceRefresh = false) => {
       const now = Date.now();
 
-      // Si no es un refresh forzado y los datos son recientes, no recargar
       if (!forceRefresh && now - lastFetchTime < CACHE_DURATION && menus.length > 0) {
-        console.log('📦 Usando datos en caché de menús');
         return;
       }
 
-      // Evitar múltiples llamadas simultáneas
-      if (isFetching.current) {
-        console.log('⏳ Ya hay una carga de menús en progreso');
-        return;
-      }
+      if (isFetching.current) return;
 
       isFetching.current = true;
       setLoadingMenus(true);
       setError(null);
 
       try {
-        console.log('🔄 Cargando menús del comercio ID 4 y asegurando al menos 2...');
+        // Fetch products from Supabase (commerce ID resolved internally)
+        const response = await menuService.getAllMenus({
+          pageSize: 10,
+          sortDirection: 'DESC',
+        });
 
-        // Acumular productos hasta tener al menos 2
-        const pageSize = 10;
-        let pageNumber = 0;
-        let totalPages = 1;
-        const aggregated: Menu[] = [];
+        const allMenus = response.content;
 
-        do {
-          const response = await menuService.getAllMenus({
-            commerceId: 4,
-            pageNumber,
-            pageSize,
-            sortDirection: 'DESC',
-          });
-          totalPages = response.totalPages ?? 1;
-          const items = response.content.map((item) => new Menu(item));
-          aggregated.push(...items);
-          pageNumber += 1;
-        } while (aggregated.length < 2 && pageNumber < totalPages);
-
-        // Seleccionar 2 productos aleatorios (o menos si no hay suficiente)
-        const selected = aggregated.length >= 2
-          ? [...aggregated].sort(() => Math.random() - 0.5).slice(0, 2)
-          : aggregated;
+        const selected = allMenus;
 
         setMenus(selected);
         setLastFetchTime(now);
-        console.log(`✅ Menús seleccionados: ${selected.length} del comercio 4`);
       } catch (err) {
-        console.error('❌ Error fetching menus:', err);
+        console.error('Error fetching menus:', err);
         setError('No se pudieron cargar los productos');
       } finally {
         setLoadingMenus(false);
@@ -84,6 +60,6 @@ export const useMenus = () => {
     menus,
     loadingMenus,
     error,
-    refetchMenus: () => fetchMenus(true), // Siempre forzar refresh cuando se llama explícitamente
+    refetchMenus: () => fetchMenus(true),
   };
 };

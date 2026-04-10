@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Animated } from 'react-native';
+import { View, Text, Animated, StyleSheet } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useRef } from 'react';
 
@@ -9,7 +9,6 @@ interface EnhancedTabBarIconProps {
   color: string;
   size: number;
   badge?: number;
-  isChicken?: boolean;
 }
 
 export const EnhancedTabBarIcon: React.FC<EnhancedTabBarIconProps> = ({
@@ -18,112 +17,84 @@ export const EnhancedTabBarIcon: React.FC<EnhancedTabBarIconProps> = ({
   color,
   size,
   badge,
-  isChicken = false,
 }) => {
   const scaleAnim = useRef(new Animated.Value(1)).current;
-  const bounceAnim = useRef(new Animated.Value(0)).current;
 
   useFocusEffect(() => {
     if (focused) {
-      // Animación de entrada suave
-      Animated.sequence([
-        Animated.timing(scaleAnim, {
-          toValue: 1.1,
-          duration: 150,
-          useNativeDriver: true,
-        }),
-        Animated.timing(scaleAnim, {
-          toValue: 1,
-          duration: 150,
-          useNativeDriver: true,
-        }),
-      ]).start();
-
-      // Animación de rebote para el pollo
-      if (isChicken) {
-        Animated.sequence([
-          Animated.timing(bounceAnim, {
-            toValue: -3,
-            duration: 200,
-            useNativeDriver: true,
-          }),
-          Animated.timing(bounceAnim, {
-            toValue: 0,
-            duration: 200,
-            useNativeDriver: true,
-          }),
-        ]).start();
-      }
+      Animated.spring(scaleAnim, {
+        toValue: 1.1,
+        friction: 6,
+        tension: 80,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        friction: 6,
+        tension: 80,
+        useNativeDriver: true,
+      }).start();
     }
   });
 
   return (
-    <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-      {/* Contenedor del icono con animaciones */}
+    <View style={styles.container}>
       <Animated.View
-        style={{
-          transform: [
-            { scale: scaleAnim },
-            { translateY: isChicken ? bounceAnim : 0 },
-          ],
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-        
-        {/* Fondo circular para el icono activo */}
-        {focused && (
-          <View
-            style={{
-              position: 'absolute',
-              width: 40,
-              height: 40,
-              borderRadius: 20,
-              backgroundColor: 'rgba(255, 255, 255, 0.2)',
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.25,
-              shadowRadius: 4,
-              elevation: 5,
-            }}
-          />
-        )}
+        style={[
+          styles.iconWrapper,
+          {
+            transform: [{ scale: scaleAnim }],
+          },
+        ]}>
 
-        {/* Icono principal */}
-        <View style={{ position: 'relative' }}>
-          <Icon 
-            color="#FFFFFF" 
-            size={focused ? size + 2 : size} 
-          />
-          
-          {/* Badge de notificación */}
-          {badge && badge > 0 && (
-            <View
-              style={{
-                position: 'absolute',
-                top: -6,
-                right: -6,
-                backgroundColor: '#FF4444',
-                borderRadius: 8,
-                minWidth: 16,
-                height: 16,
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderWidth: 1,
-                borderColor: '#FFFFFF',
-              }}>
-              <Text
-                style={{
-                  color: '#FFFFFF',
-                  fontSize: 8,
-                  fontWeight: 'bold',
-                  textAlign: 'center',
-                }}>
-                {badge > 99 ? '99+' : badge}
-              </Text>
-            </View>
-          )}
-        </View>
+        {/* Icono */}
+        <Icon
+          color={focused ? '#FFFFFF' : 'rgba(255, 255, 255, 0.5)'}
+          size={24}
+          strokeWidth={focused ? 2.5 : 2}
+        />
+
+        {/* Badge */}
+        {badge && badge > 0 && (
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>
+              {badge > 9 ? '9+' : badge}
+            </Text>
+          </View>
+        )}
       </Animated.View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  iconWrapper: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  badge: {
+    position: 'absolute',
+    top: -8,
+    right: -10,
+    backgroundColor: '#FFEB3B',
+    borderRadius: 10,
+    minWidth: 18,
+    height: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#DA2919',
+  },
+  badgeText: {
+    color: '#DA2919',
+    fontSize: 10,
+    fontWeight: '800',
+    paddingHorizontal: 4,
+  },
+});

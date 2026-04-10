@@ -2,7 +2,7 @@ export class Banner {
   id: number;
   titulo: string;
   descripcion: string;
-  imagen: string;
+  imagen: any;
   link: string;
   fechaInicio: [number, number, number];
   fechaFin: [number, number, number];
@@ -16,7 +16,7 @@ export class Banner {
     id: number,
     titulo: string,
     descripcion: string,
-    imagen: string,
+    imagen: any,
     link: string,
     fechaInicio: [number, number, number],
     fechaFin: [number, number, number],

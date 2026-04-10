@@ -1,12 +1,14 @@
-import { MapPinIcon, CheckCircleIcon } from 'lucide-react-native';
+import { MapPinIcon, CheckCircleIcon, Plus } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator, Alert, StyleSheet } from 'react-native';
 
 import { AddressForm } from './addressForm';
 import { AddressList } from './addressListModal';
+import { GlobalText } from './GlobalText';
 
 import { Address } from '~/domain/entities/addressEntity';
-import { DeliveryAddressService } from '~/domain/services/deliveryAddressService';
+
+const PRIMARY_RED = '#DA2919';
 
 interface DeliveryAddressSelectorProps {
   onAddressSelected: (address: Address) => void;
@@ -19,29 +21,10 @@ export const DeliveryAddressSelector = ({ onAddressSelected }: DeliveryAddressSe
   const [error, setError] = useState<string | null>(null);
   const [addressListModalVisible, setAddressListModalVisible] = useState(false);
   const [addAddressModalVisible, setAddAddressModalVisible] = useState(false);
-  const deliveryAddressService = DeliveryAddressService.getInstance();
 
   const fetchAddresses = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const addressList = await deliveryAddressService.getAllDeliveryAddresses();
-      setAddresses(addressList || []);
-
-      const defaultAddress =
-        addressList && addressList.length > 0
-          ? addressList.find((addr) => addr.isDefault) || addressList[0]
-          : null;
-
-      if (defaultAddress) {
-        setSelectedAddress(defaultAddress);
-        onAddressSelected(defaultAddress);
-      }
-    } catch {
-      setError('No se pudieron cargar las direcciones');
-    } finally {
-      setLoading(false);
-    }
+    // Addresses are managed locally for now
+    setLoading(false);
   };
 
   const handleSelectAddress = async (address: Address) => {
@@ -49,34 +32,26 @@ export const DeliveryAddressSelector = ({ onAddressSelected }: DeliveryAddressSe
     onAddressSelected(address);
     setAddressListModalVisible(false);
 
-    if (!address.isDefault) {
-      try {
-        await deliveryAddressService.updateDeliveryAddress({
-          ...address,
-          isDefault: true,
-        });
-        setAddresses(
-          addresses.map((addr) => ({
-            ...addr,
-            isDefault: addr.id === address.id,
-          }))
-        );
-      } catch (error) {
-        console.error('Error setting default address:', error);
-        Alert.alert('Error', 'No se pudo establecer la dirección por defecto');
-      }
-    }
+    setAddresses(
+      addresses.map((addr) => ({
+        ...addr,
+        isDefault: addr.id === address.id,
+      }))
+    );
   };
 
   const handleAddressAdded = async (newAddress?: Address) => {
     setAddAddressModalVisible(false);
 
     if (newAddress) {
-      setSelectedAddress(newAddress);
-      onAddressSelected(newAddress);
+      const mockNewAddress = {
+        ...newAddress,
+        id: Date.now(),
+      };
+      setAddresses([...addresses, mockNewAddress]);
+      setSelectedAddress(mockNewAddress);
+      onAddressSelected(mockNewAddress);
     }
-
-    await fetchAddresses();
   };
 
   useEffect(() => {
@@ -85,39 +60,53 @@ export const DeliveryAddressSelector = ({ onAddressSelected }: DeliveryAddressSe
 
   const renderAddressItem = ({ item }: { item: Address }) => (
     <TouchableOpacity
-      className="flex-row items-center justify-between p-4"
+      style={[
+        styles.addressItem,
+        item.id === selectedAddress?.id && styles.addressItemSelected,
+      ]}
       onPress={() => handleSelectAddress(item)}>
-      <View className="flex-1">
-        <Text className="text-base font-semibold">{item.title}</Text>
-        <Text className="text-sm text-gray-600">{item.streets}</Text>
+      <View style={styles.addressInfo}>
+        <Text style={styles.addressTitle}>{item.title}</Text>
+        <Text style={styles.addressStreet}>{item.streets}</Text>
+        {item.floor && <Text style={styles.addressFloor}>Piso: {item.floor}</Text>}
       </View>
-      {item.id === selectedAddress?.id && <CheckCircleIcon color="#DA2919" size={24} />}
+      {item.id === selectedAddress?.id && (
+        <View style={styles.checkCircle}>
+          <CheckCircleIcon color="#FFF" size={16} />
+        </View>
+      )}
     </TouchableOpacity>
   );
 
   return (
     <View>
       <TouchableOpacity
-        className="flex-row items-center rounded-lg p-3"
+        style={styles.selector}
         onPress={() => setAddressListModalVisible(true)}>
-        <MapPinIcon color="#DA2919" size={24} />
-        <View className="ml-2 flex-1">
+        <View style={styles.iconContainer}>
+          <MapPinIcon color={PRIMARY_RED} size={22} />
+        </View>
+        <View style={styles.selectorContent}>
           {loading ? (
-            <ActivityIndicator size="small" color="#DA2919" />
+            <ActivityIndicator size="small" color={PRIMARY_RED} />
           ) : error ? (
-            <Text className="text-red-500">{error}</Text>
+            <Text style={styles.errorText}>{error}</Text>
           ) : selectedAddress ? (
             <>
-              <Text className="text-sm text-gray-500">Entregar en</Text>
-              <Text className="text-base font-semibold">{selectedAddress.title}</Text>
+              <Text style={styles.label}>Entregar en</Text>
+              <Text style={styles.addressName}>{selectedAddress.title}</Text>
+              <Text style={styles.addressStreetSmall} numberOfLines={1}>
+                {selectedAddress.streets}
+              </Text>
             </>
           ) : (
-            <Text className="text-base">Seleccionar dirección de entrega</Text>
+            <Text style={styles.placeholder}>Seleccionar dirección</Text>
           )}
         </View>
+        <Text style={styles.changeText}>Cambiar</Text>
       </TouchableOpacity>
 
-      {/* Addres list modal */}
+      {/* Address list modal */}
       <AddressList
         addresses={addresses}
         loading={loading}
@@ -136,3 +125,94 @@ export const DeliveryAddressSelector = ({ onAddressSelected }: DeliveryAddressSe
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  selector: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFF',
+    borderRadius: 16,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  iconContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    backgroundColor: `${PRIMARY_RED}10`,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  selectorContent: {
+    flex: 1,
+  },
+  label: {
+    fontSize: 12,
+    color: '#999',
+  },
+  addressName: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#2D3436',
+    marginTop: 2,
+  },
+  addressStreetSmall: {
+    fontSize: 13,
+    color: '#666',
+    marginTop: 2,
+  },
+  placeholder: {
+    fontSize: 15,
+    color: '#999',
+  },
+  errorText: {
+    fontSize: 14,
+    color: '#DC2626',
+  },
+  changeText: {
+    fontSize: 13,
+    color: PRIMARY_RED,
+    fontWeight: '600',
+  },
+  addressItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  addressItemSelected: {
+    backgroundColor: '#FFF9F8',
+  },
+  addressInfo: {
+    flex: 1,
+  },
+  addressTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#2D3436',
+  },
+  addressStreet: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 4,
+  },
+  addressFloor: {
+    fontSize: 13,
+    color: '#999',
+    marginTop: 2,
+  },
+  checkCircle: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: PRIMARY_RED,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

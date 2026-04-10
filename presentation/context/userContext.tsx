@@ -1,178 +1,153 @@
-import { jwtDecode } from 'jwt-decode';
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 import { User } from '~/domain/entities/userEntity';
-import { RegisterData, LoginData } from '~/domain/repositories/iuserRepository';
-import { AuthService } from '~/domain/services/authService';
-import { PushNotificationService } from '~/domain/services/pushNotificationService';
-import { UserService } from '~/domain/services/userService';
-import { tryCatch } from '~/infrastructure/config/tryCatch';
-import { AsyncStorageService } from '~/infrastructure/storage/asyncStorageService';
+import { supabase } from '~/infrastructure/supabase/client';
 
 interface UserContextType {
   user: User | null;
   loadingUser: boolean;
   error: Error | null;
-  login: (loginData: LoginData) => Promise<void>;
-  register: (userData: RegisterData) => Promise<void>;
+  login: (loginData: { email: string; password: string }) => Promise<void>;
+  register: (userData: { firstName: string; lastName: string; email: string; password: string }) => Promise<void>;
   logout: () => Promise<void>;
   fetchUserData: () => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
-const authService = AuthService.getInstance();
-const userService = UserService.getInstance();
-const pushNotificationService = PushNotificationService.getInstance();
+
+function mapSupabaseUser(supabaseUser: any): User {
+  const meta = supabaseUser.user_metadata || {};
+  return new User({
+    id: 0,
+    idUser: 0,
+    email: supabaseUser.email || '',
+    dni: null,
+    role: ['USER'],
+    firstName: meta.first_name || meta.firstName || supabaseUser.email?.split('@')[0] || '',
+    lastName: meta.last_name || meta.lastName || '',
+    numberPhone: meta.phone || null,
+    positiveBalance: 0,
+    imageProfile: meta.avatar_url || null,
+    percentageCompleted: 100,
+    kyc: true,
+    address: {
+      id: 0,
+      title: '',
+      streets: '',
+      floor: null,
+      reference: null,
+      latitude: '',
+      longitude: '',
+      isDefault: true,
+    },
+  } as unknown as User);
+}
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const isTokenExpired = (token: string): boolean => {
-    try {
-      const decodedToken = jwtDecode(token);
-      const currentTime = Date.now() / 1000;
-      return decodedToken.exp ? decodedToken.exp < currentTime : true;
-    } catch {
-      return true;
-    }
-  };
-
   const fetchUserData = async () => {
     try {
-      const token = await AsyncStorageService.getItem('accessToken');
-
-      if (!token || isTokenExpired(token)) {
-        await refreshToken();
-        return;
-      }
-
-      const { data: userData, error } = await tryCatch(userService.getCurrentUser());
-
-      if (userData) {
-        setUser(userData);
-        await AsyncStorageService.setItem('user', JSON.stringify(userData));
-        await registerPushToken();
-      } else if (error) {
-        if (error.message?.includes('401')) {
-          await refreshToken();
-        } else {
-          setError(error);
-        }
-      }
-    } catch (error) {
-      setError(error as Error);
-    }
-  };
-
-  const registerPushToken = async () => {
-    try {
-      const pushToken = await AsyncStorageService.getItem('pushToken');
-      if (pushToken) {
-        const storedToken = await AsyncStorageService.getItem('previousPushToken');
-        if (storedToken && storedToken !== pushToken) {
-          await pushNotificationService.sendTokenToServer(storedToken, pushToken);
-        } else {
-          await pushNotificationService.sendTokenToServer(pushToken);
-        }
+      const { data: { user: supabaseUser } } = await supabase.auth.getUser();
+      if (supabaseUser) {
+        setUser(mapSupabaseUser(supabaseUser));
       } else {
-        const newToken = await pushNotificationService.registerForPushNotifications();
-        if (newToken) {
-          await pushNotificationService.sendTokenToServer(newToken);
-        }
+        setUser(null);
       }
-    } catch (error) {
-      console.error('Error registering push token after auth:', error);
+    } catch (err) {
+      setError(err as Error);
     }
   };
 
-  const login = async (loginData: LoginData) => {
+  const login = async (loginData: { email: string; password: string }) => {
     try {
-      const { data, error } = await tryCatch(authService.login(loginData));
+      const { data, error: authError } = await supabase.auth.signInWithPassword({
+        email: loginData.email,
+        password: loginData.password,
+      });
 
-      if (error || !data) {
-        setError(error);
-        throw error;
+      if (authError) {
+        const err = new Error(authError.message);
+        setError(err);
+        throw err;
       }
 
-      await AsyncStorageService.setItem('accessToken', data.accessToken);
-      await AsyncStorageService.setItem('refreshToken', data.refreshToken);
-
-      await fetchUserData();
-    } catch (error) {
-      throw error;
+      if (data.user) {
+        setUser(mapSupabaseUser(data.user));
+      }
+    } catch (err) {
+      throw err;
     }
   };
 
-  const register = async (userData: RegisterData) => {
+  const register = async (userData: { firstName: string; lastName: string; email: string; password: string }) => {
     try {
-      const { data, error } = await tryCatch(authService.register(userData));
+      const { data, error: authError } = await supabase.auth.signUp({
+        email: userData.email,
+        password: userData.password,
+        options: {
+          data: {
+            first_name: userData.firstName,
+            last_name: userData.lastName,
+          },
+        },
+      });
 
-      if (error || !data) {
-        setError(error);
-        throw error;
+      if (authError) {
+        const err = new Error(authError.message);
+        setError(err);
+        throw err;
       }
 
-      await AsyncStorageService.setItem('accessToken', data.accessToken);
-      await AsyncStorageService.setItem('refreshToken', data.refreshToken);
-
-      await fetchUserData();
-    } catch (error) {
-      setError(error as Error);
-    }
-  };
-
-  const refreshToken = async () => {
-    try {
-      const { data, error } = await tryCatch(authService.refreshToken());
-
-      if (error) {
-        await logout();
-        setError(error);
-        throw error;
+      if (data.user) {
+        setUser(mapSupabaseUser(data.user));
       }
-
-      if (!data) {
-        await logout();
-        return;
-      }
-
-      await AsyncStorageService.setItem('accessToken', data.accessToken);
-      await AsyncStorageService.setItem('refreshToken', data.refreshToken);
-
-      await fetchUserData();
-    } catch {
-      await logout();
-      throw error;
+    } catch (err) {
+      setError(err as Error);
+      throw err;
     }
   };
 
   const logout = async () => {
     try {
-      await authService.logout();
+      await supabase.auth.signOut();
       setUser(null);
-      await AsyncStorageService.multiRemove(['accessToken', 'refreshToken', 'user']);
-    } catch (error) {
-      console.error('Logout error:', error);
+    } catch (err) {
+      console.error('Logout error:', err);
     }
   };
 
   useEffect(() => {
-    const initializeUserData = async () => {
+    // Check initial session
+    const initSession = async () => {
       try {
-        const { data: storedToken } = await tryCatch(AsyncStorageService.getItem('accessToken'));
-
-        if (storedToken) await fetchUserData();
-      } catch (error) {
-        console.error('Error initializing user data:', error);
-        setError(error as Error);
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          setUser(mapSupabaseUser(session.user));
+        }
+      } catch (err) {
+        console.error('Error initializing session:', err);
       } finally {
         setLoading(false);
       }
     };
 
-    initializeUserData();
+    initSession();
+
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setUser(mapSupabaseUser(session.user));
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   return (

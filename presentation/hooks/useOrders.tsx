@@ -3,6 +3,9 @@ import { useOrderEvents } from '~/presentation/context/orderContext';
 
 import { OrderEntity } from '~/domain/entities/orderEntity';
 import { OrderService } from '~/domain/services/orderService';
+import { supabase } from '~/infrastructure/supabase/client';
+import { CommerceSupabaseService } from '~/domain/services/supabase/commerceService';
+import { mapOrder } from '~/domain/mappers/supabaseMappers';
 
 export const useOrders = () => {
   const [orders, setOrders] = useState<OrderEntity[]>([]);
@@ -30,21 +33,62 @@ export const useOrders = () => {
       setRefreshing(false);
     }
   };
+
   useEffect(() => {
     fetchOrders(currentPage);
   }, [currentPage]);
 
-  // Escucha eventos de creación/actualización y refresca la página 0
+  // Listen for order creation/update events and refresh
   useEffect(() => {
     setRefreshing(true);
     setCurrentPage(0);
     fetchOrders(0);
   }, [ordersRevision]);
 
+  // Realtime subscription for order updates
+  useEffect(() => {
+    let channel: any;
+
+    const setupRealtime = async () => {
+      try {
+        const commerceService = CommerceSupabaseService.getInstance();
+        const commerceId = await commerceService.getCommerceId();
+
+        channel = supabase
+          .channel('orders-realtime')
+          .on(
+            'postgres_changes',
+            {
+              event: '*',
+              schema: 'public',
+              table: 'orders',
+              filter: `commerce_id=eq.${commerceId}`,
+            },
+            () => {
+              // Refresh orders when any order changes
+              fetchOrders(currentPage);
+            }
+          )
+          .subscribe();
+      } catch {
+        // Commerce not loaded yet, skip realtime
+      }
+    };
+
+    setupRealtime();
+
+    return () => {
+      if (channel) {
+        supabase.removeChannel(channel);
+      }
+    };
+  }, [currentPage]);
+
   const handleRefresh = () => {
     setRefreshing(true);
     fetchOrders(currentPage);
   };
+
   const handleNextPage = () => {
     if (currentPage < totalPages - 1) {
       setCurrentPage((prev) => prev + 1);
@@ -56,6 +100,7 @@ export const useOrders = () => {
       setCurrentPage((prev) => prev - 1);
     }
   };
+
   return {
     orders,
     error,

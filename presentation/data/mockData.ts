@@ -1,0 +1,528 @@
+/**
+ * DEMO MODE: Mock Data
+ * Este archivo contiene datos de ejemplo para ejecutar la app sin backend
+ */
+
+import { Menu, MenuItem } from '~/domain/entities/menuEntity';
+import { Category } from '~/domain/entities/categoryEntity';
+import { Commerce } from '~/domain/entities/commerceEntity';
+import { Banner } from '~/domain/entities/bannerEntity';
+import { User } from '~/domain/entities/userEntity';
+
+// ============================================
+// DEMO MODE FLAG
+// ============================================
+export const DEMO_MODE = false;
+
+// ============================================
+// DEMO USER
+// ============================================
+export const DEMO_USER = new User({
+    id: 1,
+    idUser: 1,
+    email: 'demo@dores.app',
+    dni: null,
+    role: ['USER'],
+    firstName: 'Usuario',
+    lastName: 'Demo',
+    numberPhone: '+54 11 1234-5678',
+    positiveBalance: 0,
+    imageProfile: null,
+    percentageCompleted: 100,
+    kyc: true,
+    address: {
+        id: 1,
+        title: 'Mi Casa',
+        streets: 'Av. Principal 1234',
+        floor: null,
+        reference: null,
+        latitude: '-34.5875',
+        longitude: '-58.4123',
+        isDefault: true,
+    },
+} as User);
+
+// ============================================
+// CATEGORIES - Using custom PNG icons in card.tsx
+// ============================================
+export const MOCK_CATEGORIES: Category[] = [
+    new Category({ id: 1, name: 'Hamburguesas', description: 'Hamburguesas artesanales' } as Category),
+    new Category({ id: 2, name: 'Pizza', description: 'Pizzas italianas' } as Category),
+    new Category({ id: 3, name: 'Pollos', description: 'Pollos asados y broaster' } as Category),
+    new Category({ id: 4, name: 'Nuggets', description: 'Nuggets y papas' } as Category),
+    new Category({ id: 5, name: 'Alitas', description: 'Alitas de pollo' } as Category),
+    new Category({ id: 6, name: 'Combos', description: 'Combos y promociones' } as Category),
+];
+
+// ============================================
+// PRODUCTS / MENUS
+// ============================================
+const menuItems: MenuItem[] = [
+    {
+        id: 1,
+        commerceId: 1,
+        name: 'Promo Especial 1',
+        description: 'Deliciosa promoción 1 con los mejores ingredientes.',
+        price: 4500,
+        stock: true,
+        image: [{ id: 1, name: 'promo1', type: 'image/png', url: require('../../assets/menu/Carrusel de promos -01.png') }],
+        category: { id: 6, name: 'Combos', urlImage: null },
+        dietaryRestrictions: [],
+    },
+    {
+        id: 2,
+        commerceId: 1,
+        name: 'Promo Especial 2',
+        description: 'Deliciosa promoción 2 con los mejores ingredientes.',
+        price: 4600,
+        stock: true,
+        image: [{ id: 2, name: 'promo2', type: 'image/png', url: require('../../assets/menu/Carrusel de promos -02.png') }],
+        category: { id: 1, name: 'Hamburguesas', urlImage: null },
+        dietaryRestrictions: [],
+    },
+    {
+        id: 3,
+        commerceId: 1,
+        name: 'Promo Especial 3',
+        description: 'Deliciosa promoción 3 con los mejores ingredientes.',
+        price: 4700,
+        stock: true,
+        image: [{ id: 3, name: 'promo3', type: 'image/png', url: require('../../assets/menu/Carrusel de promos -03.png') }],
+        category: { id: 3, name: 'Pollos', urlImage: null },
+        dietaryRestrictions: [],
+    },
+    {
+        id: 4,
+        commerceId: 1,
+        name: 'Promo Especial 4',
+        description: 'Deliciosa promoción 4 con los mejores ingredientes.',
+        price: 4800,
+        stock: true,
+        image: [{ id: 4, name: 'promo4', type: 'image/png', url: require('../../assets/menu/Carrusel de promos -04.png') }],
+        category: { id: 2, name: 'Pizza', urlImage: null },
+        dietaryRestrictions: [],
+    },
+    {
+        id: 5,
+        commerceId: 1,
+        name: 'Promo Especial 5',
+        description: 'Deliciosa promoción 5 con los mejores ingredientes.',
+        price: 4900,
+        stock: true,
+        image: [{ id: 5, name: 'promo5', type: 'image/png', url: require('../../assets/menu/Carrusel de promos -05.png') }],
+        category: { id: 5, name: 'Alitas', urlImage: null },
+        dietaryRestrictions: [],
+    },
+    {
+        id: 6,
+        commerceId: 1,
+        name: 'Promo Especial 6',
+        description: 'Deliciosa promoción 6 con los mejores ingredientes.',
+        price: 5000,
+        stock: true,
+        image: [{ id: 6, name: 'promo6', type: 'image/png', url: require('../../assets/menu/Carrusel de promos -06.png') }],
+        category: { id: 6, name: 'Combos', urlImage: null },
+        dietaryRestrictions: [],
+    },
+    {
+        id: 7,
+        commerceId: 1,
+        name: 'Promo Especial 7',
+        description: 'Deliciosa promoción 7 con los mejores ingredientes.',
+        price: 5100,
+        stock: true,
+        image: [{ id: 7, name: 'promo7', type: 'image/png', url: require('../../assets/menu/Carrusel de promos -07.png') }],
+        category: { id: 1, name: 'Hamburguesas', urlImage: null },
+        dietaryRestrictions: [],
+    },
+    {
+        id: 8,
+        commerceId: 1,
+        name: 'Promo Especial 8',
+        description: 'Deliciosa promoción 8 con los mejores ingredientes.',
+        price: 5200,
+        stock: true,
+        image: [{ id: 8, name: 'promo8', type: 'image/png', url: require('../../assets/menu/Carrusel de promos -08.png') }],
+        category: { id: 3, name: 'Pollos', urlImage: null },
+        dietaryRestrictions: [],
+    },
+    {
+        id: 9,
+        commerceId: 1,
+        name: 'Promo Especial 9',
+        description: 'Deliciosa promoción 9 con los mejores ingredientes.',
+        price: 5300,
+        stock: true,
+        image: [{ id: 9, name: 'promo9', type: 'image/png', url: require('../../assets/menu/Carrusel de promos -09.png') }],
+        category: { id: 2, name: 'Pizza', urlImage: null },
+        dietaryRestrictions: [],
+    },
+    {
+        id: 10,
+        commerceId: 1,
+        name: 'Promo Especial 10',
+        description: 'Deliciosa promoción 10 con los mejores ingredientes.',
+        price: 5400,
+        stock: true,
+        image: [{ id: 10, name: 'promo10', type: 'image/png', url: require('../../assets/menu/Carrusel de promos -10.png') }],
+        category: { id: 5, name: 'Alitas', urlImage: null },
+        dietaryRestrictions: [],
+    },
+    {
+        id: 11,
+        commerceId: 1,
+        name: 'Promo Especial 11',
+        description: 'Deliciosa promoción 11 con los mejores ingredientes.',
+        price: 5500,
+        stock: true,
+        image: [{ id: 11, name: 'promo11', type: 'image/png', url: require('../../assets/menu/Carrusel de promos -11.png') }],
+        category: { id: 6, name: 'Combos', urlImage: null },
+        dietaryRestrictions: [],
+    },
+    {
+        id: 12,
+        commerceId: 1,
+        name: 'Promo Especial 12',
+        description: 'Deliciosa promoción 12 con los mejores ingredientes.',
+        price: 5600,
+        stock: true,
+        image: [{ id: 12, name: 'promo12', type: 'image/png', url: require('../../assets/menu/Carrusel de promos -12.png') }],
+        category: { id: 1, name: 'Hamburguesas', urlImage: null },
+        dietaryRestrictions: [],
+    },
+    {
+        id: 13,
+        commerceId: 1,
+        name: 'Promo Especial 13',
+        description: 'Deliciosa promoción 13 con los mejores ingredientes.',
+        price: 5700,
+        stock: true,
+        image: [{ id: 13, name: 'promo13', type: 'image/png', url: require('../../assets/menu/Carrusel de promos -13.png') }],
+        category: { id: 3, name: 'Pollos', urlImage: null },
+        dietaryRestrictions: [],
+    },
+    {
+        id: 14,
+        commerceId: 1,
+        name: 'Promo Especial 14',
+        description: 'Deliciosa promoción 14 con los mejores ingredientes.',
+        price: 5800,
+        stock: true,
+        image: [{ id: 14, name: 'promo14', type: 'image/png', url: require('../../assets/menu/Carrusel de promos -14.png') }],
+        category: { id: 2, name: 'Pizza', urlImage: null },
+        dietaryRestrictions: [],
+    },
+    {
+        id: 15,
+        commerceId: 1,
+        name: 'Promo Especial 15',
+        description: 'Deliciosa promoción 15 con los mejores ingredientes.',
+        price: 5900,
+        stock: true,
+        image: [{ id: 15, name: 'promo15', type: 'image/png', url: require('../../assets/menu/Carrusel de promos -15.png') }],
+        category: { id: 5, name: 'Alitas', urlImage: null },
+        dietaryRestrictions: [],
+    },
+    {
+        id: 16,
+        commerceId: 1,
+        name: 'Promo Especial 16',
+        description: 'Deliciosa promoción 16 con los mejores ingredientes.',
+        price: 6000,
+        stock: true,
+        image: [{ id: 16, name: 'promo16', type: 'image/png', url: require('../../assets/menu/Carrusel de promos -16.png') }],
+        category: { id: 6, name: 'Combos', urlImage: null },
+        dietaryRestrictions: [],
+    },
+    {
+        id: 17,
+        commerceId: 1,
+        name: 'Promo Especial 17',
+        description: 'Deliciosa promoción 17 con los mejores ingredientes.',
+        price: 6100,
+        stock: true,
+        image: [{ id: 17, name: 'promo17', type: 'image/png', url: require('../../assets/menu/Carrusel de promos -17.png') }],
+        category: { id: 1, name: 'Hamburguesas', urlImage: null },
+        dietaryRestrictions: [],
+    },
+    {
+        id: 18,
+        commerceId: 1,
+        name: 'Promo Especial 18',
+        description: 'Deliciosa promoción 18 con los mejores ingredientes.',
+        price: 6200,
+        stock: true,
+        image: [{ id: 18, name: 'promo18', type: 'image/png', url: require('../../assets/menu/Carrusel de promos -18.png') }],
+        category: { id: 3, name: 'Pollos', urlImage: null },
+        dietaryRestrictions: [],
+    },
+    {
+        id: 19,
+        commerceId: 1,
+        name: 'Promo Especial 19',
+        description: 'Deliciosa promoción 19 con los mejores ingredientes.',
+        price: 6300,
+        stock: true,
+        image: [{ id: 19, name: 'promo19', type: 'image/png', url: require('../../assets/menu/Carrusel de promos -19.png') }],
+        category: { id: 2, name: 'Pizza', urlImage: null },
+        dietaryRestrictions: [],
+    },
+    {
+        id: 20,
+        commerceId: 1,
+        name: 'Promo Especial 20',
+        description: 'Deliciosa promoción 20 con los mejores ingredientes.',
+        price: 6400,
+        stock: true,
+        image: [{ id: 20, name: 'promo20', type: 'image/png', url: require('../../assets/menu/Promos del fin de semana dores-01.png') }],
+        category: { id: 5, name: 'Alitas', urlImage: null },
+        dietaryRestrictions: [],
+    },
+];
+
+export const MOCK_MENUS: Menu[] = menuItems.map((item) => new Menu(item));
+
+// ============================================
+// COMMERCES
+// ============================================
+export const MOCK_COMMERCES: Commerce[] = [
+    new Commerce({
+        id: 1,
+        businessName: 'Dores Pollos',
+        description: 'Los mejores pollos a la brasa y broaster de la ciudad.',
+        cost: 0,
+        coverImage: 'https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=800',
+        address: {
+            id: 1,
+            street: 'Av. Principal 1234',
+            city: 'Buenos Aires',
+            state: 'CABA',
+            country: 'Argentina',
+            postalCode: '1425',
+            latitude: '-34.5875',
+            longitude: '-58.4123',
+        },
+        distance: 1.2,
+        active: true,
+        email: 'contacto@dores.app',
+        rangeHours: { id: 1, dayOfWeek: 'MONDAY', openingTime: [10, 0], closingTime: [22, 0] },
+        idUser: 1,
+        kyb: true,
+        percentageCompleted: 100,
+        phoneNumber: '+54 11 5555-1234',
+        profileImage: 'https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=200',
+        taxId: '30-12345678-9',
+        validation: true,
+    } as Commerce),
+];
+
+// ============================================
+// BANNERS
+// ============================================
+const now = new Date();
+const today: [number, number, number] = [now.getFullYear(), now.getMonth() + 1, now.getDate()];
+const futureDate: [number, number, number] = [now.getFullYear() + 1, now.getMonth() + 1, now.getDate()];
+const timestamp = now.toISOString();
+
+export const MOCK_BANNERS: Banner[] = [
+    new Banner(
+        1,
+        '¡Promo Familiar!',
+        '20% de descuento en combos familiares',
+        'https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=800&h=400&fit=crop',
+        '',
+        today,
+        futureDate,
+        true,
+        1,
+        false,
+        timestamp,
+        timestamp
+    ),
+    new Banner(
+        2,
+        'Nuevas Hamburguesas',
+        'Probá nuestras hamburguesas artesanales',
+        'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800&h=400&fit=crop',
+        '',
+        today,
+        futureDate,
+        true,
+        2,
+        false,
+        timestamp,
+        timestamp
+    ),
+    new Banner(
+        3,
+        'Delivery Gratis',
+        'En pedidos mayores a $5000',
+        'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&h=400&fit=crop',
+        '',
+        today,
+        futureDate,
+        true,
+        3,
+        false,
+        timestamp,
+        timestamp
+    ),
+];
+
+// ============================================
+// MOCK ORDERS
+// ============================================
+import { Order, OrderEntity } from '~/domain/entities/orderEntity';
+
+const mockOrdersData: Order[] = [
+    {
+        id: 1001,
+        type: 'OrdersResponse',
+        total: 8500,
+        idCustomer: 1,
+        deliveryName: 'Usuario Demo',
+        update: false,
+        qr: 'DORES-1001',
+        delivery: true,
+        deliveryTime: '30-45 min',
+        modified: false,
+        costDelivery: 500,
+        costFee: 300,
+        deliveryAddress: {
+            id: 1,
+            title: 'Mi Casa',
+            streets: 'Av. Principal 1234',
+            latitude: '-34.5875',
+            longitude: '-58.4123',
+        },
+        orderStatus: 'EN_PREPARACION',
+        orderPayment: [{
+            id: 1,
+            price: 8500,
+            priceFee: 300,
+            priceDelivery: 500,
+            priceTransaction: null,
+            importeRefoundCharges: null,
+            details: 'Combo Familiar',
+            id_sp: null,
+            id_reference: 'REF-1001',
+            paymentMethod: 'EFECTIVO',
+            idUser: 1,
+            idCommerce: 1,
+            paymentLink: null,
+            paymentLinkSandbox: null,
+            paymentType: 'BUY_MENU',
+            paymentStatus: 'APPROVED',
+            expirationDate: null,
+            dateApproved: timestamp,
+            dateCreated: timestamp,
+            moneyReleaseDate: null,
+            created_at: timestamp,
+            updated_at: timestamp,
+        }],
+        detailsOrder: [
+            { id: 1, idMenu: 6, idCommerce: 1, quantity: 1, observaciones: ['Sin picante'] },
+        ],
+    },
+    {
+        id: 1002,
+        type: 'OrdersResponse',
+        total: 4400,
+        idCustomer: 1,
+        deliveryName: 'Usuario Demo',
+        update: false,
+        qr: 'DORES-1002',
+        delivery: true,
+        deliveryTime: '25-35 min',
+        modified: false,
+        costDelivery: 500,
+        costFee: 200,
+        deliveryAddress: {
+            id: 1,
+            title: 'Mi Casa',
+            streets: 'Av. Principal 1234',
+            latitude: '-34.5875',
+            longitude: '-58.4123',
+        },
+        orderStatus: 'PEDIDO_EN_PROCESO',
+        orderPayment: [{
+            id: 2,
+            price: 4400,
+            priceFee: 200,
+            priceDelivery: 500,
+            priceTransaction: null,
+            importeRefoundCharges: null,
+            details: '2x Hamburguesa Clásica',
+            id_sp: null,
+            id_reference: 'REF-1002',
+            paymentMethod: 'TARJETA',
+            idUser: 1,
+            idCommerce: 1,
+            paymentLink: null,
+            paymentLinkSandbox: null,
+            paymentType: 'BUY_MENU',
+            paymentStatus: 'APPROVED',
+            expirationDate: null,
+            dateApproved: timestamp,
+            dateCreated: timestamp,
+            moneyReleaseDate: null,
+            created_at: timestamp,
+            updated_at: timestamp,
+        }],
+        detailsOrder: [
+            { id: 2, idMenu: 3, idCommerce: 1, quantity: 2, observaciones: [] },
+        ],
+    },
+    {
+        id: 1003,
+        type: 'OrdersResponse',
+        total: 5600,
+        idCustomer: 1,
+        deliveryName: 'Usuario Demo',
+        update: false,
+        qr: 'DORES-1003',
+        delivery: true,
+        deliveryTime: 'Entregado',
+        modified: false,
+        costDelivery: 0,
+        costFee: 250,
+        deliveryAddress: {
+            id: 1,
+            title: 'Mi Casa',
+            streets: 'Av. Principal 1234',
+            latitude: '-34.5875',
+            longitude: '-58.4123',
+        },
+        orderStatus: 'PEDIDO_ENTREGADO',
+        orderPayment: [{
+            id: 3,
+            price: 5600,
+            priceFee: 250,
+            priceDelivery: 0,
+            priceTransaction: null,
+            importeRefoundCharges: null,
+            details: 'Pollo Broaster + Alitas BBQ',
+            id_sp: null,
+            id_reference: 'REF-1003',
+            paymentMethod: 'EFECTIVO',
+            idUser: 1,
+            idCommerce: 1,
+            paymentLink: null,
+            paymentLinkSandbox: null,
+            paymentType: 'BUY_MENU',
+            paymentStatus: 'APPROVED',
+            expirationDate: null,
+            dateApproved: new Date(Date.now() - 86400000).toISOString(), // Ayer
+            dateCreated: new Date(Date.now() - 86400000).toISOString(),
+            moneyReleaseDate: null,
+            created_at: new Date(Date.now() - 86400000).toISOString(),
+            updated_at: new Date(Date.now() - 86400000).toISOString(),
+        }],
+        detailsOrder: [
+            { id: 3, idMenu: 1, idCommerce: 1, quantity: 1, observaciones: [] },
+            { id: 4, idMenu: 7, idCommerce: 1, quantity: 1, observaciones: ['Extra salsa'] },
+        ],
+    },
+];
+
+export const MOCK_ORDERS: OrderEntity[] = mockOrdersData.map((order) => new OrderEntity(order));

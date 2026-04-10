@@ -1,14 +1,9 @@
-import { CategoryRepository } from '~/data/repository/categoryRepository';
 import { Category } from '~/domain/entities/categoryEntity';
-import { AsyncStorageService } from '~/infrastructure/storage/asyncStorageService';
+import { supabase } from '~/infrastructure/supabase/client';
+import { mapCategory } from '~/domain/mappers/supabaseMappers';
 
 export class CategoryService {
-  private categoryRepository: CategoryRepository;
   private static categoryService: CategoryService;
-
-  constructor() {
-    this.categoryRepository = new CategoryRepository();
-  }
 
   static getInstance(): CategoryService {
     if (!CategoryService.categoryService) {
@@ -18,7 +13,16 @@ export class CategoryService {
   }
 
   async getCategories(): Promise<Category[]> {
-    const token = await AsyncStorageService.getItem('accessToken');
-    return this.categoryRepository.getAllCategories(token ?? undefined);
+    const { data, error } = await supabase
+      .from('categories')
+      .select('*')
+      .order('name');
+
+    if (error) {
+      console.error('Error fetching categories:', error);
+      throw new Error(error.message);
+    }
+
+    return (data || []).map(mapCategory);
   }
 }

@@ -1,10 +1,9 @@
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { CheckCircleIcon, Search } from 'lucide-react-native';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   View,
   SafeAreaView,
-  FlatList,
   Text,
   TouchableOpacity,
   ScrollView,
@@ -62,11 +61,6 @@ export default function Home() {
   const { refreshNotifications } = useNotifications();
   const [loading, setLoading] = useState<boolean>(false);
 
-  useEffect(() => {
-    console.log('🎨 Home - Banners state:', banners);
-    console.log('🎨 Home - Banners length:', banners?.length);
-  }, [banners]);
-
   const renderAddressItem = ({ item }: { item: Address }) => {
     return (
       <TouchableOpacity
@@ -117,30 +111,69 @@ export default function Home() {
         showsVerticalScrollIndicator={false}>
         <UserAddressHeader onPressAddress={handleAddressPress} />
 
-        {/* Ejemplo de texto con la nueva fuente Luckiest Guy */}
-        <View className="mx-4 mb-2 mt-2">
+        {/* Sección de bienvenida moderna */}
+        <View style={{
+          marginHorizontal: 16,
+          marginTop: 16,
+          marginBottom: 12,
+        }}>
+          <GlobalText
+            style={{
+              fontSize: 14,
+              color: '#666',
+              marginBottom: 4,
+            }}>
+            ¡Hola! 👋
+          </GlobalText>
           <GlobalText
             variant="bold"
             style={{
-              fontSize: 24,
+              fontSize: 26,
               color: theme.primaryColor,
-              textAlign: 'center',
+              letterSpacing: -0.5,
             }}>
-            ¡Bienvenido a Dores!
+            Bienvenido a Dores
           </GlobalText>
         </View>
 
+        {/* Buscador moderno */}
         <TouchableOpacity
-          className="mx-10 mt-4 flex-row items-center justify-between rounded-full px-10 py-2"
           style={{
-            borderColor: theme.borderColor,
-            borderWidth: 1,
-            backgroundColor: theme.backgroundColor,
-            height: 40,
+            marginHorizontal: 16,
+            marginTop: 8,
+            marginBottom: 8,
+            flexDirection: 'row',
+            alignItems: 'center',
+            backgroundColor: '#F5F5F5',
+            borderRadius: 16,
+            paddingHorizontal: 16,
+            paddingVertical: 14,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.05,
+            shadowRadius: 8,
+            elevation: 2,
           }}
           onPress={() => router.navigate('CommerceDetail', { commerceId: 4 })}>
-          <GlobalText>¿Qué quieres comer hoy?</GlobalText>
-          <Search color="gray" />
+          <Search color={theme.primaryColor} size={22} />
+          <GlobalText style={{
+            marginLeft: 12,
+            fontSize: 15,
+            color: '#999',
+            flex: 1,
+          }}>
+            ¿Qué quieres comer hoy?
+          </GlobalText>
+          <View style={{
+            backgroundColor: theme.primaryColor,
+            paddingHorizontal: 12,
+            paddingVertical: 6,
+            borderRadius: 20,
+          }}>
+            <GlobalText style={{ color: '#FFF', fontSize: 12, fontWeight: '600' }}>
+              Buscar
+            </GlobalText>
+          </View>
         </TouchableOpacity>
         <View className="my-4">
           <CategoryGrid
@@ -162,37 +195,29 @@ export default function Home() {
           )}
 
           <View className="mb-4 flex-row justify-between px-4">
-          <GlobalText className="text-lg font-medium">Productos</GlobalText>
+            <GlobalText className="text-lg font-medium">Productos</GlobalText>
             <GlobalText
               className="text-lg font-medium text-[#DA2919]"
-          onPress={() => router.navigate('CommerceDetail', { commerceId: 4 })}>
-          Ver todos
+              onPress={() => router.navigate('CommerceDetail', { commerceId: 4 })}>
+              Ver todos
             </GlobalText>
           </View>
 
           {loadingMenus ? (
-            <View className="items-center py-8">
+            <View style={{ alignItems: 'center', paddingVertical: 32 }}>
               <ActivityIndicator size="large" color={theme.primaryColor} />
-              <GlobalText className="mt-2 text-sm text-gray-600">Cargando productos...</GlobalText>
+              <Text style={{ marginTop: 8, fontSize: 14, color: '#666' }}>Cargando productos...</Text>
+            </View>
+          ) : menus.length === 0 ? (
+            <View style={{ alignItems: 'center', paddingVertical: 32 }}>
+              <Text style={{ fontSize: 14, color: '#999' }}>No hay productos disponibles</Text>
             </View>
           ) : (
-            <FlatList
-              data={menus}
-              renderItem={({ item }) => (
-                <CardMenuList menu={item} commerceId={item.commerceId} commerceStatus />
-              )}
-              numColumns={2}
-              keyExtractor={(item, index) => `menu-${item.commerceId}-${item.id}-${index}`}
-              showsVerticalScrollIndicator={false}
-              scrollEnabled={false}
-              contentContainerStyle={{
-                paddingHorizontal: 8,
-                paddingBottom: 20,
-              }}
-              columnWrapperStyle={{
-                justifyContent: 'space-between',
-              }}
-            />
+            <View style={{ paddingHorizontal: 8, paddingBottom: 100, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+              {menus.slice(0, 8).map((item, index) => (
+                <CardMenuList key={`menu-${item.commerceId}-${item.id}-${index}`} menu={item} commerceId={item.commerceId} commerceStatus />
+              ))}
+            </View>
           )}
         </View>
 

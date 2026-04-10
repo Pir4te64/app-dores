@@ -1,10 +1,8 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator as createStack } from '@react-navigation/stack';
+import { Home as HomeIcon, ClipboardList, ShoppingCart, User as UserIcon } from 'lucide-react-native';
+import { Text } from 'react-native';
 
-import Cart from '~/assets/cart.svg';
-import Chicken from '~/assets/chicken.svg';
-import HomeIcon from '~/assets/home.svg';
-import User from '~/assets/profile.svg';
 import { EnhancedTabBarIcon } from '~/presentation/components/enhancedTabBarIcon';
 import { useCart } from '~/presentation/context/cartContext';
 import { AuthScreen } from '~/presentation/screens/auth';
@@ -25,6 +23,8 @@ import { ProfileDetail } from '~/presentation/screens/profileDetail';
 import { ResetPassword } from '~/presentation/screens/resetPassword';
 import Subcategories from '~/presentation/screens/subcategories';
 import { Terms } from '~/presentation/screens/terms';
+import CardPayment from '~/presentation/screens/cardPayment';
+import SavedCards from '~/presentation/screens/savedCards';
 import { getThemedStyles } from '~/presentation/styles/theme';
 
 const Stack = createStack();
@@ -179,8 +179,9 @@ const checkoutScreens: ScreenConfig[] = [
     options: {
       headerShown: true,
       title: 'Mis Pedidos',
-      headerTintColor: '#FFFCFA',
-      headerStyle: { backgroundColor: '#1a3260' },
+      headerBackTitle: '',
+      headerShadowVisible: false,
+      headerStyle: { backgroundColor: '#fffcfa' },
     },
   },
   {
@@ -188,11 +189,24 @@ const checkoutScreens: ScreenConfig[] = [
     component: OrderDetail,
     options: {
       headerShown: true,
-      title: 'Pedidos',
-      headerTintColor: '#FFFCFA',
+      title: 'Detalle',
       headerBackTitle: '',
       headerShadowVisible: false,
-      headerStyle: { backgroundColor: '#1a3260' },
+      headerStyle: { backgroundColor: '#fffcfa' },
+    },
+  },
+  {
+    name: 'CardPayment',
+    component: CardPayment,
+    options: {
+      headerShown: false,
+    },
+  },
+  {
+    name: 'SavedCards',
+    component: SavedCards,
+    options: {
+      headerShown: false,
     },
   },
 ];
@@ -295,32 +309,29 @@ export const AppNavigator = () => {
         tabBarStyle: {
           backgroundColor: theme.primaryColor,
           borderTopWidth: 0,
-          paddingTop: 8,
-          paddingBottom: 8,
+          paddingTop: 10,
+          paddingBottom: 30,
           paddingHorizontal: 16,
-          height: 70,
+          height: 85,
+          borderTopLeftRadius: 20,
+          borderTopRightRadius: 20,
           shadowColor: '#000',
           shadowOffset: { width: 0, height: -4 },
-          shadowOpacity: 0.15,
-          shadowRadius: 8,
-          elevation: 10,
+          shadowOpacity: 0.1,
+          shadowRadius: 12,
+          elevation: 15,
         },
         tabBarItemStyle: {
-          height: 54,
-          borderRadius: 16,
-          marginHorizontal: 4,
+          paddingTop: 6,
+          paddingBottom: 2,
         },
         tabBarActiveTintColor: '#FFFFFF',
-        tabBarInactiveTintColor: '#FFFFFF',
+        tabBarInactiveTintColor: 'rgba(255, 255, 255, 0.7)',
         tabBarShowLabel: true,
         tabBarLabelStyle: {
           fontSize: 11,
           fontWeight: '600',
-          marginTop: 4,
-          color: '#FFFFFF',
-        },
-        tabBarIconStyle: {
-          marginTop: 0,
+          marginTop: 6,
         },
       }}>
       <Tab.Screen
@@ -331,7 +342,9 @@ export const AppNavigator = () => {
           title: 'Inicio',
           headerShadowVisible: false,
           headerTitleAlign: 'center',
-          tabBarLabelStyle: { color: '#FFFFFF' },
+          tabBarLabel: ({ focused }) => (
+            <Text style={{ color: '#FFFFFF', fontSize: 11, fontWeight: focused ? '700' : '500', marginTop: 4 }}>Inicio</Text>
+          ),
           tabBarIcon: ({ color, size, focused }) => (
             <EnhancedTabBarIcon icon={HomeIcon} color={color} size={size} focused={focused} />
           ),
@@ -348,14 +361,15 @@ export const AppNavigator = () => {
           headerStyle: {
             backgroundColor: theme.backgroundColor,
           },
-          tabBarLabelStyle: { color: '#FFFFFF' },
+          tabBarLabel: ({ focused }) => (
+            <Text style={{ color: '#FFFFFF', fontSize: 11, fontWeight: focused ? '700' : '500', marginTop: 4 }}>Pedidos</Text>
+          ),
           tabBarIcon: ({ color, size, focused }) => (
             <EnhancedTabBarIcon
-              icon={Chicken}
+              icon={ClipboardList}
               color={color}
               size={size}
               focused={focused}
-              isChicken
             />
           ),
         }}
@@ -372,10 +386,12 @@ export const AppNavigator = () => {
             headerStyle: {
               backgroundColor: theme.primaryColor,
             },
-            tabBarLabelStyle: { color: '#FFFFFF' },
+            tabBarLabel: ({ focused }) => (
+              <Text style={{ color: '#FFFFFF', fontSize: 11, fontWeight: focused ? '700' : '500', marginTop: 4 }}>Carrito</Text>
+            ),
             tabBarIcon: ({ color, size, focused }) => (
               <EnhancedTabBarIcon
-                icon={Cart}
+                icon={ShoppingCart}
                 color={color}
                 size={size}
                 focused={focused}
@@ -396,9 +412,11 @@ export const AppNavigator = () => {
           headerStyle: {
             backgroundColor: theme.primaryColor,
           },
-          tabBarLabelStyle: { color: '#FFFFFF' },
+          tabBarLabel: ({ focused }) => (
+            <Text style={{ color: '#FFFFFF', fontSize: 11, fontWeight: focused ? '700' : '500', marginTop: 4 }}>Perfil</Text>
+          ),
           tabBarIcon: ({ color, size, focused }) => (
-            <EnhancedTabBarIcon icon={User} color={color} size={size} focused={focused} />
+            <EnhancedTabBarIcon icon={UserIcon} color={color} size={size} focused={focused} />
           ),
         }}
       />

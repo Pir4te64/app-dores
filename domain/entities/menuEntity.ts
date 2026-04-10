@@ -2,7 +2,7 @@ export interface MenuImage {
   id: number;
   name: string;
   type: string;
-  url: string;
+  url: any;
 }
 
 interface Category {

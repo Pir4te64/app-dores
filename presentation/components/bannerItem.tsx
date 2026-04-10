@@ -1,35 +1,55 @@
 import { useState } from 'react';
-import { TouchableOpacity, Image, Dimensions } from 'react-native';
+import { TouchableOpacity, Image, StyleSheet, View } from 'react-native';
 
 import { Banner } from '~/domain/entities/bannerEntity';
 import { WebViewComponent } from '~/presentation/screens/webview';
 
-const { width } = Dimensions.get('window');
+interface Props {
+  item: Banner;
+  width: number;
+  height: number;
+}
 
-export const BannerItem = ({ item }: { item: Banner }) => {
+export const BannerItem = ({ item, width, height }: Props) => {
   const [showWebView, setShowWebView] = useState<boolean>(false);
-  const openUrl = () => setShowWebView(true);
+  const openUrl = () => {
+    if (item.link) setShowWebView(true);
+  };
   const clean = (url: string) => url.replace(/`/g, '').trim();
 
   return (
     <TouchableOpacity
-      className="overflow-hidden rounded-xl"
       onPress={openUrl}
-      activeOpacity={0.8}>
+      activeOpacity={0.9}
+      style={[styles.container, { width, height }]}>
       <Image
         source={{ uri: clean(item.imagen) }}
-        style={{
-          width: width - 32,
-          height: 140,
-          borderRadius: 12,
-        }}
+        style={[styles.image, { width, height }]}
         resizeMode="cover"
       />
-      <WebViewComponent
-        url={clean(item.link)}
-        visible={showWebView}
-        onClose={() => setShowWebView(false)}
-      />
+      <View style={styles.overlay} />
+      {item.link ? (
+        <WebViewComponent
+          url={clean(item.link)}
+          visible={showWebView}
+          onClose={() => setShowWebView(false)}
+        />
+      ) : null}
     </TouchableOpacity>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
+  image: {
+    borderRadius: 16,
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: 16,
+    backgroundColor: 'rgba(0,0,0,0.05)',
+  },
+});

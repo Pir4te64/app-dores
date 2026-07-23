@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../bancamiga-dores"
+		},
+		{
+			"path": "../dores-admin"
+		}
+	],
+	"settings": {}
+}
